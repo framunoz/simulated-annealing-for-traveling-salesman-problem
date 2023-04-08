@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tsp package &mdash; sa-for-tsp 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="tsp" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            sa-for-tsp
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">tsp</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">tsp package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tsp.kernels">tsp.kernels module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tsp.kernels.KernelTSP"><code class="docutils literal notranslate"><span class="pre">KernelTSP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsp.kernels.BaseKernelTSP"><code class="docutils literal notranslate"><span class="pre">BaseKernelTSP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsp.kernels.SwapKernelTSP"><code class="docutils literal notranslate"><span class="pre">SwapKernelTSP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsp.kernels.ReversionKernelTSP"><code class="docutils literal notranslate"><span class="pre">ReversionKernelTSP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsp.kernels.InsertionKernelTSP"><code class="docutils literal notranslate"><span class="pre">InsertionKernelTSP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsp.kernels.RandomWalkKernelTSP"><code class="docutils literal notranslate"><span class="pre">RandomWalkKernelTSP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsp.kernels.MixingKernelTSP"><code class="docutils literal notranslate"><span class="pre">MixingKernelTSP</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tsp.sa">tsp.sa module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tsp.sa.SimulatedAnnealingTSP"><code class="docutils literal notranslate"><span class="pre">SimulatedAnnealingTSP</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tsp.utils">tsp.utils module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tsp.utils.logarithmic_cooling_schedule"><code class="docutils literal notranslate"><span class="pre">logarithmic_cooling_schedule()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsp.utils.exponential_cooling_schedule"><code class="docutils literal notranslate"><span class="pre">exponential_cooling_schedule()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsp.utils.repeat"><code class="docutils literal notranslate"><span class="pre">repeat()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsp.utils.distance_matrix"><code class="docutils literal notranslate"><span class="pre">distance_matrix()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tsp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sa-for-tsp</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">tsp</a></li>
+      <li class="breadcrumb-item active">tsp package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tsp.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tsp-package">
+<h1>tsp package<a class="headerlink" href="#tsp-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-tsp.kernels">
+<span id="tsp-kernels-module"></span><h2>tsp.kernels module<a class="headerlink" href="#module-tsp.kernels" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="tsp.kernels.KernelTSP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tsp.kernels.</span></span><span class="sig-name descname"><span class="pre">KernelTSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tsp/kernels.html#KernelTSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.KernelTSP" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></p>
+<p>Protocol class used to generalise the behaviour of sampling new routes.
+It is used in the <a class="reference internal" href="#tsp.sa.SimulatedAnnealingTSP" title="tsp.sa.SimulatedAnnealingTSP"><code class="xref py py-class docutils literal notranslate"><span class="pre">tsp.sa.SimulatedAnnealingTSP</span></code></a>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tsp.kernels.KernelTSP.rng">
+<span class="sig-name descname"><span class="pre">rng</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Generator</span></em><a class="headerlink" href="#tsp.kernels.KernelTSP.rng" title="Permalink to this definition"></a></dt>
+<dd><p>The generator of the instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsp.kernels.KernelTSP.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tsp/kernels.html#KernelTSP.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.KernelTSP.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Samples a new route, using the previous route. You can call the instance to obtain the same effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>route</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Previous route.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Modified route.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tsp.kernels.BaseKernelTSP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tsp.kernels.</span></span><span class="sig-name descname"><span class="pre">BaseKernelTSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Generator</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tsp/kernels.html#BaseKernelTSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.BaseKernelTSP" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Abstract class used to generalise the behaviour of sampling new routes.
+It is used in the <a class="reference internal" href="#tsp.sa.SimulatedAnnealingTSP" title="tsp.sa.SimulatedAnnealingTSP"><code class="xref py py-class docutils literal notranslate"><span class="pre">tsp.sa.SimulatedAnnealingTSP</span></code></a>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tsp.kernels.BaseKernelTSP.rng">
+<span class="sig-name descname"><span class="pre">rng</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Generator</span></em><a class="headerlink" href="#tsp.kernels.BaseKernelTSP.rng" title="Permalink to this definition"></a></dt>
+<dd><p>The generator of the instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsp.kernels.BaseKernelTSP.sample">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tsp/kernels.html#BaseKernelTSP.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.BaseKernelTSP.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Samples a new route, using the previous route. You can call the instance to obtain the same effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>route</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Previous route.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Modified route.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tsp.kernels.SwapKernelTSP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tsp.kernels.</span></span><span class="sig-name descname"><span class="pre">SwapKernelTSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Generator</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tsp/kernels.html#SwapKernelTSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.SwapKernelTSP" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tsp.kernels.BaseKernelTSP" title="tsp.kernels.BaseKernelTSP"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseKernelTSP</span></code></a></p>
+<p>Kernel that performs a swap between two cities on a route.</p>
+<p>e.g.: For a route <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9]</span></code>, if <code class="docutils literal notranslate"><span class="pre">i=3</span></code> and <code class="docutils literal notranslate"><span class="pre">j=7</span></code> are selected as indices to swap,
+the new route would be <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">7,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">3,</span> <span class="pre">8,</span> <span class="pre">9]</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tsp.kernels.SwapKernelTSP.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tsp/kernels.html#SwapKernelTSP.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.SwapKernelTSP.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Samples a new route, using the previous route. You can call the instance to obtain the same effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>route</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Previous route.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Modified route.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tsp.kernels.ReversionKernelTSP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tsp.kernels.</span></span><span class="sig-name descname"><span class="pre">ReversionKernelTSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Generator</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tsp/kernels.html#ReversionKernelTSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.ReversionKernelTSP" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tsp.kernels.BaseKernelTSP" title="tsp.kernels.BaseKernelTSP"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseKernelTSP</span></code></a></p>
+<p>Kernel that performs a reversion on a route.</p>
+<p>e.g.: For a route <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9]</span></code>, if <code class="docutils literal notranslate"><span class="pre">i=3</span></code> and <code class="docutils literal notranslate"><span class="pre">j=7</span></code> are selected as indices to reverse
+the route, the new route would be <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">7,</span> <span class="pre">6,</span> <span class="pre">5,</span> <span class="pre">4,</span> <span class="pre">3,</span> <span class="pre">8,</span> <span class="pre">9]</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tsp.kernels.ReversionKernelTSP.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tsp/kernels.html#ReversionKernelTSP.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.ReversionKernelTSP.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Samples a new route, using the previous route. You can call the instance to obtain the same effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>route</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Previous route.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Modified route.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tsp.kernels.InsertionKernelTSP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tsp.kernels.</span></span><span class="sig-name descname"><span class="pre">InsertionKernelTSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Generator</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tsp/kernels.html#InsertionKernelTSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.InsertionKernelTSP" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tsp.kernels.BaseKernelTSP" title="tsp.kernels.BaseKernelTSP"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseKernelTSP</span></code></a></p>
+<p>Kernel that performs an insertion on a route.</p>
+<p>e.g.: For a route <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9]</span></code>, if <code class="docutils literal notranslate"><span class="pre">i=3</span></code> and <code class="docutils literal notranslate"><span class="pre">j=7</span></code> are selected as indices to insert
+the city 3 into the place 7, the new route would be <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">3,</span> <span class="pre">8,</span> <span class="pre">9]</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tsp.kernels.InsertionKernelTSP.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tsp/kernels.html#InsertionKernelTSP.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.InsertionKernelTSP.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Samples a new route, using the previous route. You can call the instance to obtain the same effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>route</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Previous route.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Modified route.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tsp.kernels.RandomWalkKernelTSP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tsp.kernels.</span></span><span class="sig-name descname"><span class="pre">RandomWalkKernelTSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Generator</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tsp/kernels.html#RandomWalkKernelTSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.RandomWalkKernelTSP" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tsp.kernels.BaseKernelTSP" title="tsp.kernels.BaseKernelTSP"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseKernelTSP</span></code></a></p>
+<p>Kernel that performs a random walk over possible path combinations. Returns a different path than the one
+initially given.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tsp.kernels.RandomWalkKernelTSP.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tsp/kernels.html#RandomWalkKernelTSP.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.RandomWalkKernelTSP.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Samples a new route, using the previous route. You can call the instance to obtain the same effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>route</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Previous route.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Modified route.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tsp.kernels.MixingKernelTSP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tsp.kernels.</span></span><span class="sig-name descname"><span class="pre">MixingKernelTSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#tsp.kernels.KernelTSP" title="tsp.kernels.KernelTSP"><span class="pre">tsp.kernels.KernelTSP</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#tsp.kernels.KernelTSP" title="tsp.kernels.KernelTSP"><span class="pre">tsp.kernels.KernelTSP</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Generator</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tsp/kernels.html#MixingKernelTSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.MixingKernelTSP" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tsp.kernels.BaseKernelTSP" title="tsp.kernels.BaseKernelTSP"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseKernelTSP</span></code></a></p>
+<p>It is a mixing of the kernels. For example, if we have the kernels <span class="math notranslate nohighlight">\(K_1\)</span>, <span class="math notranslate nohighlight">\(K_2\)</span> and <span class="math notranslate nohighlight">\(K_3\)</span>
+with the weights <span class="math notranslate nohighlight">\(\{p_i\}_{i=1}^{3}\)</span>, then the resulting new kernel would be
+<span class="math notranslate nohighlight">\(K = p_1 K_1 + p_2 K_2 + p_3 K_3\)</span>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tsp.kernels.MixingKernelTSP.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tsp/kernels.html#MixingKernelTSP.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.kernels.MixingKernelTSP.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Samples a new route, using the previous route. You can call the instance to obtain the same effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>route</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Previous route.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Modified route.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-tsp.sa">
+<span id="tsp-sa-module"></span><h2>tsp.sa module<a class="headerlink" href="#module-tsp.sa" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="tsp.sa.SimulatedAnnealingTSP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tsp.sa.</span></span><span class="sig-name descname"><span class="pre">SimulatedAnnealingTSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist_matrix:</span> <span class="pre">~numpy.ndarray</span> <span class="pre">|</span> <span class="pre">~typing.Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_iter:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cooling_schedule=&lt;function</span> <span class="pre">exponential_cooling_schedule&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel:</span> <span class="pre">~tsp.kernels.KernelTSP</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed:</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">~numpy.random._generator.Generator</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tsp/sa.html#SimulatedAnnealingTSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.sa.SimulatedAnnealingTSP" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The Simulated Annealing algorithm for solving the Traveling Salesman Problem.</p>
+<p>The novelty of this class, is that you can choose the kernel (which is equivalent to choosing the
+connections in the graph) from the list of kernels in the module <a class="reference internal" href="#module-tsp.kernels" title="tsp.kernels"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tsp.kernels</span></code></a>.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="tsp.sa.SimulatedAnnealingTSP.values">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#tsp.sa.SimulatedAnnealingTSP.values" title="Permalink to this definition"></a></dt>
+<dd><p>The values of the total distances of the routes.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tsp.sa.SimulatedAnnealingTSP.best_route">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">best_route</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tsp.sa.SimulatedAnnealingTSP.best_route" title="Permalink to this definition"></a></dt>
+<dd><p>The best route found by the algorithm.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tsp.sa.SimulatedAnnealingTSP.best_value">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">best_value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#tsp.sa.SimulatedAnnealingTSP.best_value" title="Permalink to this definition"></a></dt>
+<dd><p>The best value found by the algorithm.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tsp.sa.SimulatedAnnealingTSP.accept_prob">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">accept_prob</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#tsp.sa.SimulatedAnnealingTSP.accept_prob" title="Permalink to this definition"></a></dt>
+<dd><p>The acceptance probability history.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tsp.sa.SimulatedAnnealingTSP.abs_min_values">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">abs_min_values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#tsp.sa.SimulatedAnnealingTSP.abs_min_values" title="Permalink to this definition"></a></dt>
+<dd><p>The absolute minimum value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsp.sa.SimulatedAnnealingTSP.dist_route">
+<span class="sig-name descname"><span class="pre">dist_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/tsp/sa.html#SimulatedAnnealingTSP.dist_route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.sa.SimulatedAnnealingTSP.dist_route" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the total distance the traveller should travel when executing the route.
+If the route is of the form <span class="math notranslate nohighlight">\(x = (x_0, \ldots, x_n)\)</span>, then the total distance is computed
+by</p>
+<div class="math notranslate nohighlight">
+\[\sum_{k=0}^{n} d(x_k, x_{k+1})\]</div>
+<p>With the convention that <span class="math notranslate nohighlight">\(x_{n+1} = x_0\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>route</strong> – The route to compute the total distance.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The total distance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsp.sa.SimulatedAnnealingTSP.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tsp/sa.html#SimulatedAnnealingTSP.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.sa.SimulatedAnnealingTSP.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the algorithm.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-tsp.utils">
+<span id="tsp-utils-module"></span><h2>tsp.utils module<a class="headerlink" href="#module-tsp.utils" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tsp.utils.logarithmic_cooling_schedule">
+<span class="sig-prename descclassname"><span class="pre">tsp.utils.</span></span><span class="sig-name descname"><span class="pre">logarithmic_cooling_schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/tsp/utils.html#logarithmic_cooling_schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.utils.logarithmic_cooling_schedule" title="Permalink to this definition"></a></dt>
+<dd><p>The logarithmic cooling schedule is</p>
+<div class="math notranslate nohighlight">
+\[T_k = T_0 \cdot \ln(k_0 + 1) / \ln(k + 1 + k_0)\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>int</em>) – The number of the iteration at the temperature <span class="math notranslate nohighlight">\(T_k\)</span>.</p></li>
+<li><p><strong>T_0</strong> (<em>float</em>) – Initial temperature. Default is 25</p></li>
+<li><p><strong>k_0</strong> (<em>float</em>) – Iteration phase shift. Default is 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The temperature at iteration <span class="math notranslate nohighlight">\(k\)</span>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tsp.utils.exponential_cooling_schedule">
+<span class="sig-prename descclassname"><span class="pre">tsp.utils.</span></span><span class="sig-name descname"><span class="pre">exponential_cooling_schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/tsp/utils.html#exponential_cooling_schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.utils.exponential_cooling_schedule" title="Permalink to this definition"></a></dt>
+<dd><p>The exponential cooling schedule is</p>
+<div class="math notranslate nohighlight">
+\[T_k = \rho^k \cdot T_0\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>int</em>) – The number of the iteration at the temperature <span class="math notranslate nohighlight">\(T_k\)</span>.</p></li>
+<li><p><strong>T_0</strong> (<em>float</em>) – Initial temperature. Default is 100.</p></li>
+<li><p><strong>rho</strong> – The decay parameter. The default is 0.99. It is recommended to increase this amount to a value of 0.999 or 0.9999…</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The temperature at iteration <span class="math notranslate nohighlight">\(k\)</span>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tsp.utils.repeat">
+<span class="sig-prename descclassname"><span class="pre">tsp.utils.</span></span><span class="sig-name descname"><span class="pre">repeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tsp/utils.html#repeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.utils.repeat" title="Permalink to this definition"></a></dt>
+<dd><p>Decorator for repeated tests.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>times</strong> – The number of times to repeat the test.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the function wrapped.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tsp.utils.distance_matrix">
+<span class="sig-prename descclassname"><span class="pre">tsp.utils.</span></span><span class="sig-name descname"><span class="pre">distance_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/tsp/utils.html#distance_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsp.utils.distance_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the distance matrix from the coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>coords</strong> – Coordinate array of shape <code class="docutils literal notranslate"><span class="pre">(n_coord,</span> <span class="pre">n_dim)</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Distance matrix of shape <code class="docutils literal notranslate"><span class="pre">(n_coord,</span> <span class="pre">n_coord)</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tsp">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-tsp" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="tsp" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Francisco Muñoz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
