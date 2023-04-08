@@ -1,7 +1,7 @@
-import copy
 from unittest import TestCase
 
 from tsp.kernels import *
+from tsp.utils import repeat
 
 
 class TestSwapKernelTSP(TestCase):
@@ -103,4 +103,89 @@ class TestInsertionKernelTSP(TestCase):
         self.assertEqual(
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], route,
             "The original route has been modified by the '_sample' method."
+        )
+
+
+class TestRandomWalkKernelTSP(TestCase):
+    def setUp(self) -> None:
+        self.kernel = RandomWalkKernelTSP(42)
+
+    @repeat(20)
+    def test_sample(self):
+        route = [0, 1, 2]
+        # The possible permutations of this route are:
+        # [0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]
+        # Removing circular permutations: [0, 1, 2] -> [2, 0, 1] -> [1, 2, 0]
+        # And the possible options are: [0, 2, 1]; [1, 0, 2]; [2, 1, 0]
+        new_route = self.kernel(route)
+        self.assertNotEqual(
+            [0, 1, 2], new_route,
+            "The 'new_route' must be different of the original route."
+        )
+        self.assertNotEqual(
+            [2, 0, 1], new_route,
+            "The 'new_route' must be different of the original route permutation 1."
+        )
+        self.assertNotEqual(
+            [1, 2, 0], new_route,
+            "The 'new_route' must be different of the original route permutation 2."
+        )
+
+
+class TestMixingKernelTSP(TestCase):
+    def setUp(self) -> None:
+        self.kernel = MixingKernelTSP(
+            [SwapKernelTSP(42), ReversionKernelTSP(42), InsertionKernelTSP(42)],
+            [0.3, 0.2, 0.5], seed=42
+        )
+        self.kernel2 = MixingKernelTSP(
+            [(0.3, SwapKernelTSP(42)),
+             (0.2, ReversionKernelTSP(42)),
+             (0.5, InsertionKernelTSP(42))],
+            seed=42,
+        )
+
+    @repeat(20)
+    def test_sample(self):
+        # Testing the different ways to construct a kernel
+        kernel = self.kernel if np.random.uniform() <= 0.5 else self.kernel2
+
+        # Intervals of probabilities for u ~ Uniform[0, 1]
+        # u = 0 -> InsertionKernelTSP
+        kernel1 = kernel._choose_kernel(0)
+        expected_class = InsertionKernelTSP
+        self.assertIsInstance(
+            kernel1, expected_class,
+            "The method '_choose_kernel' does not work with value 0. test1"
+        )
+        #  u in (0.0, 0.5) -> InsertionKernelTSP
+        u = np.random.uniform(0.0, 0.5)
+        kernel2 = kernel._choose_kernel(u)
+        expected_class = InsertionKernelTSP
+        self.assertIsInstance(
+            kernel2, expected_class,
+            "The method '_choose_kernel' does not work. test2"
+        )
+        #  u in (0.5, 0.8) -> SwapKernelTSP
+        u = np.random.uniform(0.5, 0.8)
+        kernel3 = kernel._choose_kernel(u)
+        expected_class = SwapKernelTSP
+        self.assertIsInstance(
+            kernel3, expected_class,
+            "The method '_choose_kernel' does not work. test3"
+        )
+        #  u in (0.8, 1.0) -> ReversionKernelTSP
+        u = np.random.uniform(0.8, 1.0)
+        kernel4 = kernel._choose_kernel(u)
+        expected_class = ReversionKernelTSP
+        self.assertIsInstance(
+            kernel4, expected_class,
+            "The method '_choose_kernel' does not work. test4"
+        )
+        #  u = 1 -> ReversionKernelTSP
+        kernel5 = kernel._choose_kernel(1)
+        expected_class = ReversionKernelTSP
+        self.assertIsInstance(
+            kernel5, expected_class,
+            "The method '_choose_kernel' does not work. test5"
         )
