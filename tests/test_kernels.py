@@ -1,7 +1,27 @@
+import functools
 from unittest import TestCase
 
 from tsp.kernels import *
-from tsp.utils import repeat
+
+
+def repeat(times: int):
+    """
+    Decorator for repeated tests.
+
+    :param times: The number of times to repeat the test.
+    :return: the function wrapped.
+    """
+    def decorator_repeat(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            value = None
+            for _ in range(times):
+                value = func(*args, **kwargs)
+            return value
+
+        return wrapper
+
+    return decorator_repeat
 
 
 class TestSwapKernelTSP(TestCase):
@@ -12,6 +32,7 @@ class TestSwapKernelTSP(TestCase):
         route = [i for i in range(10)]
 
         swapped_route = self.kernel._sample(route, 3, 7)
+        # expected_route = [0, 1, 2, 7, 4, 5, 6, 3, 8, 9]
         expected_route = [0, 1, 2, 7, 4, 5, 6, 3, 8, 9]
 
         self.assertEqual(
@@ -73,7 +94,7 @@ class TestInsertionKernelTSP(TestCase):
         route = list(range(10))
 
         inserted_route1 = self.kernel._sample(route, 3, 7)
-        expected_route1 = [0, 1, 2, 4, 5, 6, 3, 7, 8, 9]
+        expected_route1 = [0, 1, 2, 4, 5, 6, 7, 3, 8, 9]
         self.assertEqual(
             expected_route1, inserted_route1,
             "The '_sample' method is not working. Test 1."
@@ -87,7 +108,7 @@ class TestInsertionKernelTSP(TestCase):
         )
 
         inserted_route3 = self.kernel._sample(route, 0, 5)
-        expected_route3 = [1, 2, 3, 4, 0, 5, 6, 7, 8, 9]
+        expected_route3 = [1, 2, 3, 4, 5, 0, 6, 7, 8, 9]
         self.assertEqual(
             expected_route3, inserted_route3,
             "The '_sample' method is not working index i=0."

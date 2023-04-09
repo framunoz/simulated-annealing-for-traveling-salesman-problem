@@ -1,6 +1,5 @@
 import abc
 import copy
-from collections import deque
 from typing import Protocol, Optional
 
 import numpy as np
@@ -8,10 +7,20 @@ from numpy.random import Generator
 
 from tsp.utils import _GeneratorLike, _Route, _EPS
 
+__all__ = [
+    "KernelTSP",
+    "BaseKernelTSP",
+    "SwapKernelTSP",
+    "ReversionKernelTSP",
+    "InsertionKernelTSP",
+    "RandomWalkKernelTSP",
+    "MixingKernelTSP",
+]
+
 _sample_doc = """
         Samples a new route, using the previous route. You can call the instance to obtain the same effect.
     
-        :param list[int] route: Previous route.
+        :param route: Previous route.
         :return: Modified route.
         """
 
@@ -74,7 +83,7 @@ class SwapKernelTSP(BaseKernelTSP):
         return new_route
 
     def sample(self, route: _Route) -> _Route:
-        i, j = self.rng.choice(len(route), size=2, replace=False)
+        i, j = self.rng.choice(len(route)-1, size=2, replace=False) + 1
         return self._sample(route, i, j)
 
 
@@ -94,7 +103,7 @@ class ReversionKernelTSP(BaseKernelTSP):
         return route[:i] + route[j:i-1:-1] + route[j+1:]
 
     def sample(self, route: _Route) -> _Route:
-        i, j = self.rng.choice(len(route), size=2, replace=False)
+        i, j = self.rng.choice(len(route)-1, size=2, replace=False) + 1
         return self._sample(route, i, j)
 
 
@@ -113,7 +122,7 @@ class InsertionKernelTSP(BaseKernelTSP):
         return new_route
 
     def sample(self, route: _Route) -> _Route:
-        i, j = self.rng.choice(len(route), size=2, replace=False)
+        i, j = self.rng.choice(len(route)-1, size=2, replace=False) + 1
         return self._sample(route, i, j)
 
 
@@ -123,26 +132,16 @@ class RandomWalkKernelTSP(BaseKernelTSP):
     initially given.
     """
 
-    @staticmethod
-    def _permutation_list(route: _Route, len_route: int) -> list[_Route]:
-        dq_route = deque(route)
-        perm_list = [route]
-        for _ in range(len_route-1):
-            dq_route.rotate()
-            perm_list.append(list(dq_route))
-        return perm_list
-
     def sample(self, route: _Route) -> _Route:
         len_route = len(route)
-        perm_list = self._permutation_list(route, len_route)
         new_route = route
-        while new_route in perm_list:
-            new_route = list(self.rng.choice(len_route, size=len_route, replace=False))
+        while new_route == route:
+            new_route = route[:1] + list(self.rng.choice(len_route-1, size=len_route-1, replace=False) + 1)
         return new_route
 
 
 class MixingKernelTSP(BaseKernelTSP):
-    """
+    r"""
     It is a mixing of the kernels. For example, if we have the kernels :math:`K_1`, :math:`K_2` and :math:`K_3`
     with the weights :math:`\{p_i\}_{i=1}^{3}`, then the resulting new kernel would be
     :math:`K = p_1 K_1 + p_2 K_2 + p_3 K_3`.
@@ -182,7 +181,7 @@ class MixingKernelTSP(BaseKernelTSP):
 
     def _choose_kernel(self, u: float) -> KernelTSP:
         """Choose a kernel given a number between 0 and 1."""
-        # Case u = 1 -> Return the last kernel
+        # Case u = 1 ==> Return the last kernel
         if u == 1.:
             return self.kernels[-1]
         kernel = None
