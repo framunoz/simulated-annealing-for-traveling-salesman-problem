@@ -1,0 +1,6 @@
+site_name: Simulated Annealing for Traveling Salesman Problem
+
+nav:
+  - Inicio: 'index.md'
+
+theme: readthedocs
