@@ -42,8 +42,6 @@ class logarithmic_cooling_schedule:
     :param T_0: Initial temperature. Default is 25.
     :param k_0: Iteration phase shift. Default is 1
     """
-    T_0: int | float
-    k_0: int | float
 
     def __init__(self, T_0=25, k_0=1):
         self.T_0 = T_0
@@ -63,7 +61,7 @@ class exponential_cooling_schedule:
 
     :param float T_0: Initial temperature. Default is 100.
     :param rho: The decay parameter. The default is 0.99. It is recommended to increase this amount to a value of 0.999
-    or 0.9999...
+        or 0.9999...
     """
     def __init__(self, T_0=100, rho=0.99):
         self.T_0 = T_0

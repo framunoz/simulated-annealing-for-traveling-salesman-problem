@@ -111,6 +111,7 @@ class SimulatedAnnealingTSP:
 
     @property
     def accept_ratio(self) -> np.ndarray:
+        """The probability of acceptance through the iterations."""
         return np.array(self._acceptance_ratio)
 
     @property
@@ -194,6 +195,13 @@ class SimulatedAnnealingTSP:
 
 
 def plot_summary_sa(model_sa: SimulatedAnnealingTSP, style: _LiteralStyles = "darkgrid"):
+    """
+    Plots a summary of the `model_sa` instance. More precisely, it plots the acceptance probabilities, acceptance
+    ratios and values across iterations.
+
+    :param model_sa: An instance of :py:class:`SimulatedAnnealingTSP`.
+    :param style: The style of the plot. For further information see :func:`seaborn.axes_style`. Default is `darkgrid`.
+    """
     with sns.axes_style(style):
         fig: mpl.figure.Figure = plt.figure(figsize=(15, 10))
         gs = fig.add_gridspec(3, 1, hspace=0.2)
