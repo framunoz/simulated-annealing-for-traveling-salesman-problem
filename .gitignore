@@ -71,8 +71,6 @@ target/
 # IPython Notebook
 .ipynb_checkpoints
 
-# pyenv
-.python-version
 
 # celery beat schedule file
 celerybeat-schedule
@@ -149,3 +147,7 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+# uv
+# Note: uv.lock should be committed to version control
+# .python-version can be local or committed depending on team preference

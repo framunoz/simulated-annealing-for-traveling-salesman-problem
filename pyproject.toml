@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tsp"
+version = "0.1.0"
+description = "The aim of this library is to provide the code to solve the Traveling Salesman Problem, and in the future, to use real locations to solve the problem."
+authors = [
+    { name = "Francisco Muñoz" }
+]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "seaborn",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=4.4.1",
+    "pytest-runner",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=4.4.1",
+    "pytest-runner",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tsp"]
+
+[tool.hatch.build]
+include = ["src/tsp/**/*.py"]
