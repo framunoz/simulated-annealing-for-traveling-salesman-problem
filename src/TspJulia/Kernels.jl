@@ -3,7 +3,7 @@ module Kernels
 using Random
 using ..Elements
 
-export AbstractKernel, SwapKernelTSP, ReversionKernelTSP, InsertionKernelTSP, RandomWalkKernelTSP, MixingKernelTSP, sample, _sample_swap, _sample_reversion, _sample_insertion
+export AbstractKernel, SwapKernelTSP, ReversionKernelTSP, InsertionKernelTSP, RandomWalkKernelTSP, MixingKernelTSP, sample, _sample_swap, _sample_reversion, _sample_insertion, _sample_mixing
 
 
 # MARK: Abstract Kernel
