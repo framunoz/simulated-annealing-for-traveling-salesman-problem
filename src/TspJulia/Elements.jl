@@ -25,9 +25,9 @@ Base.copy(cities::Cities)::Cities = Cities(copy(cities.cities))
 Base.isequal(cities1::Cities, cities2::Cities)::Bool = isequal(cities1.cities, cities2.cities)
 Base.length(cities::Cities)::Int = length(cities.cities)
 Base.getindex(cities::Cities, i)::Point = cities.cities[i]
-Base.setindex!(cities::Cities, i, v::Point) = cities.cities[i] = v
+Base.setindex!(cities::Cities, v::Point, i) = cities.cities[i] = v
 Base.getindex(cities::Cities, i::UnitRange)::Vector{Point} = cities.cities[i]
-Base.setindex!(cities::Cities, i::UnitRange, v::Vector{Point}) = cities.cities[i] = v
+Base.setindex!(cities::Cities, v::Vector{Point}, i::UnitRange) = cities.cities[i] = v
 Base.show(io::IO, cities::Cities) = print(io, "Cities(" * join(cities.cities, ", ") * ")")
 
 """
@@ -43,11 +43,12 @@ Base.copy(route::Route)::Route = Route(copy(route.route))
 Base.isequal(route1::Route, route2::Route)::Bool = isequal(route1.route, route2.route)
 Base.length(route::Route)::Int = length(route.route)
 Base.getindex(route::Route, i)::Int16 = route.route[i]
-Base.setindex!(route::Route, i, v) = route.route[i] = v
+Base.setindex!(route::Route, v, i) = route.route[i] = v
 Base.getindex(route::Route, i::UnitRange)::Vector{Int16} = route.route[i]
-Base.setindex!(route::Route, i::UnitRange, v::Vector) = route.route[i] = v
+Base.setindex!(route::Route, v::Vector, i::UnitRange) = route.route[i] = v
 Base.lastindex(route::Route) = lastindex(route.route)
 Base.show(io::IO, route::Route) = print(io, "Route(" * join(route.route, ", ") * ")")
+Base.:(==)(route1::Route, route2::Route)::Bool = route1.route == route2.route
 
 """
 Distance function.
