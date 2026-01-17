@@ -22,7 +22,8 @@ end
 Cities(cities::AbstractVector{Point}) = Cities(collect(cities))
 
 Base.copy(cities::Cities)::Cities = Cities(copy(cities.cities))
-Base.isequal(cities1::Cities, cities2::Cities)::Bool = isequal(cities1.cities, cities2.cities)
+Base.isequal(cities1::Cities, cities2::Cities)::Bool =
+    isequal(cities1.cities, cities2.cities)
 Base.length(cities::Cities)::Int = length(cities.cities)
 Base.getindex(cities::Cities, i)::Point = cities.cities[i]
 Base.setindex!(cities::Cities, v::Point, i) = cities.cities[i] = v
@@ -62,16 +63,15 @@ Compute distance matrix.
 """
 function compute_distance_matrix(cities::Cities)
     return [
-        distance(cities.cities[i], cities.cities[j])
-        for i in 1:length(cities.cities), j in 1:length(cities.cities)
+        distance(cities.cities[i], cities.cities[j]) for i = 1:length(cities.cities),
+        j = 1:length(cities.cities)
     ]
 end
 
 function total_distance(cities::Cities, route::Route)
     dist_matrix = compute_distance_matrix(cities)
-    return sum(
-        dist_matrix[route[i], route[i+1]] for i in 1:length(route)-1
-    ) + dist_matrix[route[end], route[1]]
+    return sum(dist_matrix[route[i], route[i+1]] for i = 1:length(route)-1) +
+           dist_matrix[route[end], route[1]]
 end
 
 end  # module Elements
