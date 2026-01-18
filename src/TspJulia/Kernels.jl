@@ -4,11 +4,11 @@ using Random
 using ..Elements
 
 export AbstractKernel,
-    SwapKernelTSP,
-    ReversionKernelTSP,
-    InsertionKernelTSP,
-    RandomWalkKernelTSP,
-    MixingKernelTSP,
+    SwapKernel,
+    ReversionKernel,
+    InsertionKernel,
+    RandomWalkKernel,
+    MixingKernel,
     sample,
     _sample_swap,
     _sample_reversion,
@@ -21,15 +21,29 @@ Abstract type for kernels.
 """
 abstract type AbstractKernel end
 
-sample(kernel::AbstractKernel, route::Route)::Route =
+function get_seed(kernel::AbstractKernel)::Union{Int, Nothing}
+    if hasfield(typeof(kernel), :seed)
+        return kernel.seed
+    end
+    throw(NotImplementedError("Kernel $(typeof(kernel)) has no field seed"))
+end
+
+function get_rng(kernel::AbstractKernel)::Random.AbstractRNG
+    if hasfield(typeof(kernel), :rng)
+        return kernel.rng
+    end
+    throw(NotImplementedError("Kernel $(typeof(kernel)) has no field rng"))
+end
+
+sample(kernel::AbstractKernel, route::Elements.Route)::Elements.Route =
     throw(NotImplementedError("sample not implemented for $(typeof(kernel))"))
 
 function Base.show(io::IO, kernel::AbstractKernel)
     name = nameof(typeof(kernel))
-    if hasfield(typeof(kernel), :seed) && kernel.seed !== nothing
-        print(io, "$name(seed=$(kernel.seed))")
-    elseif hasfield(typeof(kernel), :rng) && kernel.rng !== Random.GLOBAL_RNG
-        print(io, "$name(rng=$(kernel.rng))")
+    if get_seed(kernel) !== nothing
+        print(io, "$name(seed=$(get_seed(kernel)))")
+    elseif get_rng(kernel) !== Random.GLOBAL_RNG
+        print(io, "$name(rng=$(get_rng(kernel)))")
     else
         print(io, "$name()")
     end
@@ -43,13 +57,13 @@ E.g.: For a route ``[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]``, if ``i=3`` and ``j=7``
 are selected as indices to swap, the new route would be
 ``[1, 2, 7, 4, 5, 6, 3, 8, 9, 10]``.
 """
-struct SwapKernelTSP <: AbstractKernel
+struct SwapKernel <: AbstractKernel
     seed::Union{Int, Nothing}
     rng::Random.AbstractRNG
 
-    SwapKernelTSP(rng::Random.AbstractRNG) = new(nothing, rng)
-    SwapKernelTSP(seed::Int) = new(seed, Random.Xoshiro(seed))
-    SwapKernelTSP() = new(nothing, Random.GLOBAL_RNG)
+    SwapKernel(rng::Random.AbstractRNG) = new(nothing, rng)
+    SwapKernel(seed::Int) = new(seed, Random.Xoshiro(seed))
+    SwapKernel() = new(nothing, Random.GLOBAL_RNG)
 end
 
 function choice_without_replacement(
@@ -60,13 +74,13 @@ function choice_without_replacement(
     return shuffle(rng, 1:n)[1:k]
 end
 
-function _sample_swap(route::Route, i::Int, j::Int)::Route
+function _sample_swap(route::Elements.Route, i::Int, j::Int)::Elements.Route
     new_route = copy(route)
     new_route[i], new_route[j] = new_route[j], new_route[i]
     return new_route
 end
 
-function sample(kernel::SwapKernelTSP, route::Route)::Route
+function sample(kernel::SwapKernel, route::Elements.Route)::Elements.Route
     i, j = choice_without_replacement(kernel.rng, length(route), 2)
     return _sample_swap(route, i, j)
 end
@@ -79,23 +93,23 @@ E.g.: For a route ``[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]``, if ``i=3`` and ``j=7``
 are selected as indices to reverse the route, the new route would be
 ``[1, 2, 7, 6, 5, 4, 3, 8, 9, 10]``.
 """
-struct ReversionKernelTSP <: AbstractKernel
+struct ReversionKernel <: AbstractKernel
     seed::Union{Int, Nothing}
     rng::Random.AbstractRNG
 
-    ReversionKernelTSP(rng::Random.AbstractRNG) = new(nothing, rng)
-    ReversionKernelTSP(seed::Int) = new(seed, Random.Xoshiro(seed))
-    ReversionKernelTSP() = new(nothing, Random.GLOBAL_RNG)
+    ReversionKernel(rng::Random.AbstractRNG) = new(nothing, rng)
+    ReversionKernel(seed::Int) = new(seed, Random.Xoshiro(seed))
+    ReversionKernel() = new(nothing, Random.GLOBAL_RNG)
 end
 
-function _sample_reversion(route::Route, i::Int, j::Int)::Route
+function _sample_reversion(route::Elements.Route, i::Int, j::Int)::Elements.Route
     i, j = min(i, j), max(i, j)
     new_route = copy(route)
     new_route[i:j] = reverse(new_route[i:j])
     return new_route
 end
 
-function sample(kernel::ReversionKernelTSP, route::Route)::Route
+function sample(kernel::ReversionKernel, route::Elements.Route)::Elements.Route
     i, j = choice_without_replacement(kernel.rng, length(route), 2)
     return _sample_reversion(route, i, j)
 end
@@ -108,16 +122,16 @@ E.g.: For a route ``[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]``, if ``i=3`` and ``j=7``
 are selected as indices to insert the city 3 into the place 7,
 the new route would be ``[1, 2, 4, 5, 6, 7, 3, 8, 9, 10]``.
 """
-struct InsertionKernelTSP <: AbstractKernel
+struct InsertionKernel <: AbstractKernel
     seed::Union{Int, Nothing}
     rng::Random.AbstractRNG
 
-    InsertionKernelTSP(rng::Random.AbstractRNG) = new(nothing, rng)
-    InsertionKernelTSP(seed::Int) = new(seed, Random.Xoshiro(seed))
-    InsertionKernelTSP() = new(nothing, Random.GLOBAL_RNG)
+    InsertionKernel(rng::Random.AbstractRNG) = new(nothing, rng)
+    InsertionKernel(seed::Int) = new(seed, Random.Xoshiro(seed))
+    InsertionKernel() = new(nothing, Random.GLOBAL_RNG)
 end
 
-function _sample_insertion(route::Route, i::Int, j::Int)::Route
+function _sample_insertion(route::Elements.Route, i::Int, j::Int)::Elements.Route
     if i == j
         return copy(route)
     end
@@ -125,10 +139,10 @@ function _sample_insertion(route::Route, i::Int, j::Int)::Route
     elem_i = data[i]
     deleteat!(data, i)
     insert!(data, j, elem_i)
-    return Route(data)
+    return Elements.Route(data)
 end
 
-function sample(kernel::InsertionKernelTSP, route::Route)::Route
+function sample(kernel::InsertionKernel, route::Elements.Route)::Elements.Route
     i, j = choice_without_replacement(kernel.rng, length(route), 2)
     return _sample_insertion(route, i, j)
 end
@@ -138,20 +152,20 @@ end
 Kernel that performs a random walk over possible path combinations.
 Returns a different path than the one initially given.
 """
-struct RandomWalkKernelTSP <: AbstractKernel
+struct RandomWalkKernel <: AbstractKernel
     seed::Union{Int, Nothing}
     rng::Random.AbstractRNG
 
-    RandomWalkKernelTSP(rng::Random.AbstractRNG) = new(nothing, rng)
-    RandomWalkKernelTSP(seed::Int) = new(seed, Random.Xoshiro(seed))
-    RandomWalkKernelTSP() = new(nothing, Random.GLOBAL_RNG)
+    RandomWalkKernel(rng::Random.AbstractRNG) = new(nothing, rng)
+    RandomWalkKernel(seed::Int) = new(seed, Random.Xoshiro(seed))
+    RandomWalkKernel() = new(nothing, Random.GLOBAL_RNG)
 end
 
-function sample(kernel::RandomWalkKernelTSP, route::Route)::Route
+function sample(kernel::RandomWalkKernel, route::Elements.Route)::Elements.Route
     new_route = route
     while new_route == route
         # Concatenate the first element of the route with the shuffled rest of the route
-        new_route = Route(vcat(route[1], shuffle(kernel.rng, route[2:end])))
+        new_route = Elements.Route(vcat(route[1], shuffle(kernel.rng, route[2:end])))
     end
     return new_route
 end
@@ -163,13 +177,13 @@ Kernel that mixes multiple kernels with given probabilities.
 E.g.: For kernels ``K_1``, ``K_2`` and ``K_3`` with probabilities ``p_1``, ``p_2`` and ``p_3``,
 the resulting new kernel would be ``K = p_1 K_1 + p_2 K_2 + p_3 K_3``.
 """
-struct MixingKernelTSP <: AbstractKernel
+struct MixingKernel <: AbstractKernel
     kernels::Vector{AbstractKernel}
     probs::Vector{Float64}
     seed::Union{Int, Nothing}
     rng::Random.AbstractRNG
 
-    function MixingKernelTSP(
+    function MixingKernel(
         kernels::AbstractVector{<:AbstractKernel},
         probs::AbstractVector{<:Real},
         seed::Union{Int, Nothing} = nothing,
@@ -185,20 +199,20 @@ struct MixingKernelTSP <: AbstractKernel
         return new(collect(kernels)[indices], probs[indices], seed, rng)
     end
 
-    MixingKernelTSP(
+    MixingKernel(
         kernels::AbstractVector{<:AbstractKernel},
         probs::AbstractVector{<:Real},
         seed::Int,
     ) = new(kernels, probs, seed, Random.Xoshiro(seed))
 
-    MixingKernelTSP(
+    MixingKernel(
         kernels::AbstractVector{<:AbstractKernel},
         probs::AbstractVector{<:Real},
         rng::Random.AbstractRNG,
     ) = new(kernels, probs, nothing, rng)
 end
 
-function Base.show(io::IO, kernel::MixingKernelTSP)
+function Base.show(io::IO, kernel::MixingKernel)
     repr =
         "MixingKernelTSP(" *
         join(
@@ -212,7 +226,7 @@ function Base.show(io::IO, kernel::MixingKernelTSP)
     return print(io, repr)
 end
 
-function _choose_kernel(kernel::MixingKernelTSP, u::Real)::AbstractKernel
+function _choose_kernel(kernel::MixingKernel, u::Real)::AbstractKernel
     cumsum_p = cumsum(kernel.probs)
     for i ∈ eachindex(cumsum_p)
         if u < cumsum_p[i]
@@ -222,12 +236,16 @@ function _choose_kernel(kernel::MixingKernelTSP, u::Real)::AbstractKernel
     return kernel.kernels[end]
 end
 
-function _sample_mixing(kernel::MixingKernelTSP, route::Route, u::Real)::Route
+function _sample_mixing(
+    kernel::MixingKernel,
+    route::Elements.Route,
+    u::Real,
+)::Elements.Route
     kernel = _choose_kernel(kernel, u)
     return sample(kernel, route)
 end
 
-function sample(kernel::MixingKernelTSP, route::Route)::Route
+function sample(kernel::MixingKernel, route::Elements.Route)::Elements.Route
     u = rand(kernel.rng)
     return _sample_mixing(kernel, route, u)
 end
