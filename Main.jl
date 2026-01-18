@@ -3,7 +3,7 @@
 include("src/TspJulia/elements/Elements.jl")
 include("src/TspJulia/kernels/Kernels.jl")
 include("src/TspJulia/ScheduleFns.jl")
-include("src/TspJulia/SimulatedAnnealing.jl")
+include("src/TspJulia/simulated_annealing/SimulatedAnnealing.jl")
 # Bring exported names into scope. The dot is for a locally defined module.
 using .Elements
 using .Kernels
