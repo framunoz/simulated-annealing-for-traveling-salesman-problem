@@ -38,7 +38,7 @@ struct Route
     route::Vector{Int16}
 end
 
-Route(route::AbstractVector) = Route(Vector{Int16}(route))
+Route(route::AbstractVector{Integer}) = Route(Vector{Int16}(route))
 
 Base.copy(route::Route)::Route = Route(copy(route.route))
 Base.isequal(route1::Route, route2::Route)::Bool = isequal(route1.route, route2.route)
