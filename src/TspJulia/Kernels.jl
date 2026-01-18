@@ -3,7 +3,17 @@ module Kernels
 using Random
 using ..Elements
 
-export AbstractKernel, SwapKernelTSP, ReversionKernelTSP, InsertionKernelTSP, RandomWalkKernelTSP, MixingKernelTSP, sample, _sample_swap, _sample_reversion, _sample_insertion, _sample_mixing
+export AbstractKernel,
+    SwapKernelTSP,
+    ReversionKernelTSP,
+    InsertionKernelTSP,
+    RandomWalkKernelTSP,
+    MixingKernelTSP,
+    sample,
+    _sample_swap,
+    _sample_reversion,
+    _sample_insertion,
+    _sample_mixing
 
 
 # MARK: Abstract Kernel
@@ -11,6 +21,9 @@ export AbstractKernel, SwapKernelTSP, ReversionKernelTSP, InsertionKernelTSP, Ra
 Abstract type for kernels.
 """
 abstract type AbstractKernel end
+
+sample(kernel::AbstractKernel, route::Route)::Route =
+    throw(NotImplementedError("sample not implemented for $(typeof(kernel))"))
 
 function Base.show(io::IO, kernel::AbstractKernel)
     name = nameof(typeof(kernel))
@@ -155,21 +168,50 @@ the resulting new kernel would be ``K = p_1 K_1 + p_2 K_2 + p_3 K_3``.
 struct MixingKernelTSP <: AbstractKernel
     kernels::Vector{AbstractKernel}
     probs::Vector{Float64}
+    seed::Union{Int,Nothing}
     rng::Random.AbstractRNG
-end
 
-function MixingKernelTSP(kernels::AbstractVector{<:AbstractKernel}, probs::AbstractVector{<:Real})
-    if length(kernels) != length(probs)
-        throw(ArgumentError("The lengths of 'kernels' and 'probs' must be equals."))
+    function MixingKernelTSP(
+        kernels::AbstractVector{<:AbstractKernel},
+        probs::AbstractVector{<:Real},
+        seed::Union{Int,Nothing}=nothing,
+        rng::Random.AbstractRNG=Random.GLOBAL_RNG,
+    )
+        if length(kernels) != length(probs)
+            throw(ArgumentError("The lengths of 'kernels' and 'probs' must be equals."))
+        end
+        probs = Float64.(probs)
+        probs = Float64.(probs) .+ eps(Float64) * length(probs)
+        probs = probs / sum(probs)
+        indices = sortperm(probs, rev=true)
+        return new(collect(kernels)[indices], probs[indices], seed, rng)
     end
-    probs = Float64.(probs) .+ eps(Float64) * length(probs)
-    probs = probs / sum(probs)
-    indices = sortperm(probs, rev=true)
-    return MixingKernelTSP(Vector{AbstractKernel}(kernels[indices]), probs[indices], Random.GLOBAL_RNG)
+
+    MixingKernelTSP(
+        kernels::AbstractVector{<:AbstractKernel},
+        probs::AbstractVector{<:Real},
+        seed::Int,
+    ) = new(kernels, probs, seed, Random.Xoshiro(seed))
+
+    MixingKernelTSP(
+        kernels::AbstractVector{<:AbstractKernel},
+        probs::AbstractVector{<:Real},
+        rng::Random.AbstractRNG,
+    ) = new(kernels, probs, nothing, rng)
+
 end
 
 function Base.show(io::IO, kernel::MixingKernelTSP)
-    repr = "MixingKernelTSP(" * join(["$(kernel.kernels[i]): prob=$(round(kernel.probs[i], digits=4))" for i in eachindex(kernel.kernels)], ", ") * ")"
+    repr =
+        "MixingKernelTSP(" *
+        join(
+            [
+                "$(kernel.kernels[i]): prob=$(round(kernel.probs[i], digits=4))" for
+                i in eachindex(kernel.kernels)
+            ],
+            ", ",
+        ) *
+        ")"
     print(io, repr)
 end
 
