@@ -120,10 +120,7 @@ get_early_stop(sa::SAStatsProxy)::Bool = sa.sa.early_stop
 get_stop_after(sa::SAStatsProxy)::Int = sa.sa.stop_after
 
 function Base.show(io::IO, sa::SAStatsProxy)
-    repr =
-        "SAStatsProxy(" *
-        string(sa.sa) *
-        ", log_acceptance_probs=$(length(sa.log_acceptance_probs)), n_accept=$(sa.n_accept), acceptance_ratio=$(length(sa.acceptance_ratio)), values=$(length(sa.values))"
+    repr = "SAStatsProxy(log_acceptance_probs=$(length(sa.log_acceptance_probs)), n_accept=$(sa.n_accept), acceptance_ratio=$(length(sa.acceptance_ratio)), values=$(length(sa.values)))"
     print(io, repr)
 end
 
