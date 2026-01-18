@@ -1,7 +1,7 @@
 
 # Evaluate the module file in the global scope of the current module (Main)
 include("src/TspJulia/elements/Elements.jl")
-include("src/TspJulia/Kernels.jl")
+include("src/TspJulia/kernels/Kernels.jl")
 include("src/TspJulia/ScheduleFns.jl")
 include("src/TspJulia/SimulatedAnnealing.jl")
 # Bring exported names into scope. The dot is for a locally defined module.
