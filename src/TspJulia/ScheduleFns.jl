@@ -1,52 +1,25 @@
 module ScheduleFns
 
-export exponential_cooling_schedule, log_cooling_schedule, linear_cooling_schedule, fast_cooling_schedule, slow_cooling_schedule, linear_decrease_cooling_schedule
-
-function exponential_cooling_schedule(T_0::Real, rho::Real)
-    function aux(k::Int)
-        return T_0 * rho^k
-    end
-    return aux
-end
+export exponential_cooling_schedule,
+    log_cooling_schedule,
+    linear_increase_cooling_schedule,
+    fast_cooling_schedule,
+    slow_cooling_schedule,
+    linear_decrease_cooling_schedule
 
 
-function log_cooling_schedule(T_0::Real, k_0::Real)
-    function aux(k::Int)
-        return T_0 * log(k_0) / log(k + k_0)
-    end
-    return aux
-end
+exponential_cooling_schedule(T₀::Real, ρ::Real) = k -> T₀ * ρ^k
 
+log_cooling_schedule(T₀::Real, k₀::Real) = k -> T₀ * log(k₀) / log(k + k₀)
 
-function linear_cooling_schedule(T_0::Real, T_f::Real, n_iter::Int)
-    function aux(k::Int)
-        return T_0 + (T_f - T_0) * k / n_iter
-    end
-    return aux
-end
+linear_increase_cooling_schedule(T₀::Real, T₁::Real, n_iter::Int) =
+    k -> T₀ + (T₁ - T₀) * k / n_iter
 
+linear_decrease_cooling_schedule(T₀::Real, T₁::Real, n_iter::Int) =
+    k -> T₀ - (T₀ - T₁) * k / n_iter
 
-function fast_cooling_schedule(T_0::Real, rho::Real, n_iter::Int)
-    function aux(k::Int)
-        return T_0 * rho^(k^2 / n_iter)
-    end
-    return aux
-end
+fast_cooling_schedule(T₀::Real, ρ::Real, n_iter::Int) = k -> T₀ * ρ^(k^2 / n_iter)
 
-
-function slow_cooling_schedule(T_0::Real, rho::Real, n_iter::Int)
-    function aux(k::Int)
-        return T_0 * rho^(sqrt(k) / n_iter)
-    end
-    return aux
-end
-
-
-function linear_decrease_cooling_schedule(T_0::Real, T_f::Real, n_iter::Int)
-    function aux(k::Int)
-        return T_0 - (T_0 - T_f) * k / n_iter
-    end
-    return aux
-end
+slow_cooling_schedule(T₀::Real, ρ::Real, n_iter::Int) = k -> T₀ * ρ^(√k / n_iter)
 
 end
