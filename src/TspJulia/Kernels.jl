@@ -174,8 +174,8 @@ struct MixingKernelTSP <: AbstractKernel
     function MixingKernelTSP(
         kernels::AbstractVector{<:AbstractKernel},
         probs::AbstractVector{<:Real},
-        seed::Union{Int,Nothing}=nothing,
-        rng::Random.AbstractRNG=Random.GLOBAL_RNG,
+        seed::Union{Int,Nothing} = nothing,
+        rng::Random.AbstractRNG = Random.GLOBAL_RNG,
     )
         if length(kernels) != length(probs)
             throw(ArgumentError("The lengths of 'kernels' and 'probs' must be equals."))
@@ -183,7 +183,7 @@ struct MixingKernelTSP <: AbstractKernel
         probs = Float64.(probs)
         probs = Float64.(probs) .+ eps(Float64) * length(probs)
         probs = probs / sum(probs)
-        indices = sortperm(probs, rev=true)
+        indices = sortperm(probs, rev = true)
         return new(collect(kernels)[indices], probs[indices], seed, rng)
     end
 
