@@ -23,7 +23,7 @@ c = Cities([
     Point(7.0, 8.0),
     Point(8.0, 9.0),
     Point(9.0, 10.0),
-    Point(10.0, 11.0)
+    Point(10.0, 11.0),
 ])
 
 r = Route(1:10)

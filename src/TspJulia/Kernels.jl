@@ -15,7 +15,6 @@ export AbstractKernel,
     _sample_insertion,
     _sample_mixing
 
-
 # MARK: Abstract Kernel
 """
 Abstract type for kernels.
@@ -36,7 +35,6 @@ function Base.show(io::IO, kernel::AbstractKernel)
     end
 end
 
-
 # MARK: Swap Kernel
 """
 Kernel that performs a swap of two cities in the route.
@@ -46,7 +44,7 @@ are selected as indices to swap, the new route would be
 ``[1, 2, 7, 4, 5, 6, 3, 8, 9, 10]``.
 """
 struct SwapKernelTSP <: AbstractKernel
-    seed::Union{Int,Nothing}
+    seed::Union{Int, Nothing}
     rng::Random.AbstractRNG
 
     SwapKernelTSP(rng::Random.AbstractRNG) = new(nothing, rng)
@@ -54,11 +52,13 @@ struct SwapKernelTSP <: AbstractKernel
     SwapKernelTSP() = new(nothing, Random.GLOBAL_RNG)
 end
 
-
-function choice_without_replacement(rng::Random.AbstractRNG, n::Int, k::Int)::Vector{Int}
+function choice_without_replacement(
+    rng::Random.AbstractRNG,
+    n::Int,
+    k::Int,
+)::Vector{Int}
     return shuffle(rng, 1:n)[1:k]
 end
-
 
 function _sample_swap(route::Route, i::Int, j::Int)::Route
     new_route = copy(route)
@@ -66,12 +66,10 @@ function _sample_swap(route::Route, i::Int, j::Int)::Route
     return new_route
 end
 
-
 function sample(kernel::SwapKernelTSP, route::Route)::Route
     i, j = choice_without_replacement(kernel.rng, length(route), 2)
     return _sample_swap(route, i, j)
 end
-
 
 # MARK: Reversion Kernel
 """
@@ -82,7 +80,7 @@ are selected as indices to reverse the route, the new route would be
 ``[1, 2, 7, 6, 5, 4, 3, 8, 9, 10]``.
 """
 struct ReversionKernelTSP <: AbstractKernel
-    seed::Union{Int,Nothing}
+    seed::Union{Int, Nothing}
     rng::Random.AbstractRNG
 
     ReversionKernelTSP(rng::Random.AbstractRNG) = new(nothing, rng)
@@ -102,7 +100,6 @@ function sample(kernel::ReversionKernelTSP, route::Route)::Route
     return _sample_reversion(route, i, j)
 end
 
-
 # MARK: Insertion Kernel
 """
 Kernel that performs an insertion of a city in the route.
@@ -112,7 +109,7 @@ are selected as indices to insert the city 3 into the place 7,
 the new route would be ``[1, 2, 4, 5, 6, 7, 3, 8, 9, 10]``.
 """
 struct InsertionKernelTSP <: AbstractKernel
-    seed::Union{Int,Nothing}
+    seed::Union{Int, Nothing}
     rng::Random.AbstractRNG
 
     InsertionKernelTSP(rng::Random.AbstractRNG) = new(nothing, rng)
@@ -131,12 +128,10 @@ function _sample_insertion(route::Route, i::Int, j::Int)::Route
     return Route(data)
 end
 
-
 function sample(kernel::InsertionKernelTSP, route::Route)::Route
     i, j = choice_without_replacement(kernel.rng, length(route), 2)
     return _sample_insertion(route, i, j)
 end
-
 
 # MARK: Random Walk Kernel
 """
@@ -144,7 +139,7 @@ Kernel that performs a random walk over possible path combinations.
 Returns a different path than the one initially given.
 """
 struct RandomWalkKernelTSP <: AbstractKernel
-    seed::Union{Int,Nothing}
+    seed::Union{Int, Nothing}
     rng::Random.AbstractRNG
 
     RandomWalkKernelTSP(rng::Random.AbstractRNG) = new(nothing, rng)
@@ -161,7 +156,6 @@ function sample(kernel::RandomWalkKernelTSP, route::Route)::Route
     return new_route
 end
 
-
 # MARK: Mixing Kernel
 """
 Kernel that mixes multiple kernels with given probabilities.
@@ -172,14 +166,14 @@ the resulting new kernel would be ``K = p_1 K_1 + p_2 K_2 + p_3 K_3``.
 struct MixingKernelTSP <: AbstractKernel
     kernels::Vector{AbstractKernel}
     probs::Vector{Float64}
-    seed::Union{Int,Nothing}
+    seed::Union{Int, Nothing}
     rng::Random.AbstractRNG
 
     function MixingKernelTSP(
         kernels::AbstractVector{<:AbstractKernel},
         probs::AbstractVector{<:Real},
-        seed::Union{Int,Nothing}=nothing,
-        rng::Random.AbstractRNG=Random.GLOBAL_RNG,
+        seed::Union{Int, Nothing} = nothing,
+        rng::Random.AbstractRNG = Random.GLOBAL_RNG,
     )
         if length(kernels) != length(probs)
             throw(ArgumentError("The lengths of 'kernels' and 'probs' must be equals."))
@@ -187,7 +181,7 @@ struct MixingKernelTSP <: AbstractKernel
         probs = Float64.(probs)
         probs = Float64.(probs) .+ eps(Float64) * length(probs)
         probs = probs / sum(probs)
-        indices = sortperm(probs, rev=true)
+        indices = sortperm(probs; rev = true)
         return new(collect(kernels)[indices], probs[indices], seed, rng)
     end
 
@@ -202,7 +196,6 @@ struct MixingKernelTSP <: AbstractKernel
         probs::AbstractVector{<:Real},
         rng::Random.AbstractRNG,
     ) = new(kernels, probs, nothing, rng)
-
 end
 
 function Base.show(io::IO, kernel::MixingKernelTSP)
@@ -210,18 +203,18 @@ function Base.show(io::IO, kernel::MixingKernelTSP)
         "MixingKernelTSP(" *
         join(
             [
-                "$(kernel.kernels[i]): prob=$(round(kernel.probs[i], digits=4))"
-                for i in eachindex(kernel.kernels)
+                "$(kernel.kernels[i]): prob=$(round(kernel.probs[i], digits=4))" for
+                i ∈ eachindex(kernel.kernels)
             ],
             ", ",
         ) *
         ")"
-    print(io, repr)
+    return print(io, repr)
 end
 
 function _choose_kernel(kernel::MixingKernelTSP, u::Real)::AbstractKernel
     cumsum_p = cumsum(kernel.probs)
-    for i in eachindex(cumsum_p)
+    for i ∈ eachindex(cumsum_p)
         if u < cumsum_p[i]
             return kernel.kernels[i]
         end

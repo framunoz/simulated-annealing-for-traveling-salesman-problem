@@ -22,7 +22,6 @@ get_early_stop(sa::AbstractSimulatedAnnealing)::Bool =
 get_stop_after(sa::AbstractSimulatedAnnealing)::Int =
     throw(NotImplementedError("get_stop_after not implemented for $(typeof(sa))"))
 
-
 initial_route(sa::AbstractSimulatedAnnealing)::Route = Route(1:length(get_cities(sa)))
 
 sample_from_kernel(sa::AbstractSimulatedAnnealing, route::Route)::Route =
@@ -50,13 +49,12 @@ select_route(
 stop_criteria(sa::AbstractSimulatedAnnealing, k::Int)::Bool =
     get_early_stop(sa) && k > get_stop_after(sa)
 
-
 function run_sa(sa::AbstractSimulatedAnnealing)::Route
     route = initial_route(sa)
     route_value = compute_value(sa, route)
     best_route = route
     best_value = route_value
-    for k = 1:get_n_iter(sa)
+    for k ∈ 1:get_n_iter(sa)
         # route = step_sa(sa, route, k)
         new_route = sample_from_kernel(sa, route)
         log_accept_prob = compute_log_acceptance_prob(sa, route, new_route, k)
@@ -73,8 +71,7 @@ function run_sa(sa::AbstractSimulatedAnnealing)::Route
     return best_route
 end
 
-
-struct SimulatedAnnealingTSP{K<:AbstractKernel} <: AbstractSimulatedAnnealing
+struct SimulatedAnnealingTSP{K <: AbstractKernel} <: AbstractSimulatedAnnealing
     cities::Cities
     kernel::K
     n_iter::Int
@@ -89,7 +86,7 @@ struct SimulatedAnnealingTSP{K<:AbstractKernel} <: AbstractSimulatedAnnealing
         cooling_schedule::Function = exponential_cooling_schedule(100, 0.99),
         early_stop::Bool = true,
         stop_after::Int = 10_000,
-    ) where {K<:AbstractKernel}
+    ) where {K <: AbstractKernel}
         return new{K}(cities, kernel, n_iter, cooling_schedule, early_stop, stop_after)
     end
 end
@@ -100,7 +97,6 @@ get_n_iter(sa::SimulatedAnnealingTSP)::Int = sa.n_iter
 get_cooling_schedule(sa::SimulatedAnnealingTSP)::Function = sa.cooling_schedule
 get_early_stop(sa::SimulatedAnnealingTSP)::Bool = sa.early_stop
 get_stop_after(sa::SimulatedAnnealingTSP)::Int = sa.stop_after
-
 
 mutable struct SAStatsProxy <: AbstractSimulatedAnnealing
     sa::SimulatedAnnealingTSP
@@ -121,9 +117,8 @@ get_stop_after(sa::SAStatsProxy)::Int = sa.sa.stop_after
 
 function Base.show(io::IO, sa::SAStatsProxy)
     repr = "SAStatsProxy(log_acceptance_probs=$(length(sa.log_acceptance_probs)), n_accept=$(sa.n_accept), acceptance_ratio=$(length(sa.acceptance_ratio)), values=$(length(sa.values)))"
-    print(io, repr)
+    return print(io, repr)
 end
-
 
 function sample_from_kernel(sa::SAStatsProxy, route::Route)
     new_route = sample_from_kernel(sa.sa, route)
@@ -155,6 +150,5 @@ function select_route(
         return route
     end
 end
-
 
 end  # module SimulatedAnnealing

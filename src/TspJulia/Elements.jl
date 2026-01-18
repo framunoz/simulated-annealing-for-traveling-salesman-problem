@@ -29,7 +29,8 @@ Base.getindex(cities::Cities, i)::Point = cities.cities[i]
 Base.setindex!(cities::Cities, v::Point, i) = cities.cities[i] = v
 Base.getindex(cities::Cities, i::UnitRange)::Vector{Point} = cities.cities[i]
 Base.setindex!(cities::Cities, v::Vector{Point}, i::UnitRange) = cities.cities[i] = v
-Base.show(io::IO, cities::Cities) = print(io, "Cities(" * join(cities.cities, ", ") * ")")
+Base.show(io::IO, cities::Cities) =
+    print(io, "Cities(" * join(cities.cities, ", ") * ")")
 
 """
 Route struct.
@@ -54,23 +55,21 @@ Base.:(==)(route1::Route, route2::Route)::Bool = route1.route == route2.route
 """
 Distance function.
 """
-function distance(p1::Point, p2::Point)
-    return sqrt((p1.x - p2.x)^2 + (p1.y - p2.y)^2)
-end
+distance(p1::Point, p2::Point) = √((p1.x - p2.x)^2 + (p1.y - p2.y)^2)
 
 """
 Compute distance matrix.
 """
 function compute_distance_matrix(cities::Cities)
     return [
-        distance(cities.cities[i], cities.cities[j]) for i = 1:length(cities.cities),
-        j = 1:length(cities.cities)
+        distance(cities.cities[i], cities.cities[j]) for i ∈ 1:length(cities.cities),
+        j ∈ 1:length(cities.cities)
     ]
 end
 
 function total_distance(cities::Cities, route::Route)
     dist_matrix = compute_distance_matrix(cities)
-    return sum(dist_matrix[route[i], route[i+1]] for i = 1:length(route)-1) +
+    return sum(dist_matrix[route[i], route[i + 1]] for i ∈ 1:(length(route) - 1)) +
            dist_matrix[route[end], route[1]]
 end
 
