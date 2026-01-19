@@ -1,14 +1,13 @@
 
 # Evaluate the module file in the global scope of the current module (Main)
-include("src/TspJulia/elements/Elements.jl")
-include("src/TspJulia/kernels/Kernels.jl")
-include("src/TspJulia/ScheduleFns.jl")
-include("src/TspJulia/simulated_annealing/SimulatedAnnealing.jl")
-# Bring exported names into scope. The dot is for a locally defined module.
-using .Elements
-using .Kernels
-using .ScheduleFns
-using .SimulatedAnnealing
+include("srcjl/TspJulia.jl")
+using .TspJulia
+
+# Bring exported names into scope.
+using .TspJulia.Elements
+using .TspJulia.Kernels
+using .TspJulia.ScheduleFns
+using .TspJulia.SimulatedAnnealing
 
 using Random
 

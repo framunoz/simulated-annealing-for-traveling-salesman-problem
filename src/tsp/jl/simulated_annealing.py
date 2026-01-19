@@ -3,8 +3,8 @@
 import typing as t
 from dataclasses import dataclass
 
-from juliacall import AnyValue
-from juliacall import Main as jl
+from juliacall import AnyValue  # type: ignore
+from juliacall import Main as jl  # type: ignore
 
 from tsp.jl.common import JuliaWrapper
 from tsp.jl.elements import Cities, Route
@@ -19,10 +19,11 @@ from tsp.jl.kernels import (
 __all__ = ["SimulatedAnnealingTSP", "SAStatsProxy"]
 
 # Initialize Julia modules
-jl.include("src/TspJulia/ScheduleFns.jl")
-jl.seval("using .ScheduleFns")
-jl.include("src/TspJulia/simulated_annealing/SimulatedAnnealing.jl")
-jl.seval("using .SimulatedAnnealing")
+if not jl.seval("isdefined(Main, :TspJulia)"):
+    jl.include("srcjl/TspJulia.jl")
+jl.seval("using .TspJulia")
+jl.seval("using .TspJulia.ScheduleFns")
+jl.seval("using .TspJulia.SimulatedAnnealing")
 
 
 KernelType = SwapKernel | ReversionKernel | InsertionKernel | RandomWalkKernel | MixingKernel
@@ -54,7 +55,7 @@ class SimulatedAnnealingTSP(JuliaWrapper):
         jl_cities = self.cities.to_jl()
         jl_kernel = self.kernel.to_jl()
         
-        kwargs = {
+        kwargs: dict[str, t.Any] = {
             "n_iter": self.n_iter,
             "early_stop": self.early_stop,
             "stop_after": self.stop_after,

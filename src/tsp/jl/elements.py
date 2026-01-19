@@ -3,16 +3,18 @@
 import typing as t
 from dataclasses import dataclass
 
-from juliacall import AnyValue
-from juliacall import Main as jl
+from juliacall import AnyValue  # type: ignore
+from juliacall import Main as jl  # type: ignore
 
 from tsp.jl.common import JuliaWrapper
 
 __all__ = ["Point", "Cities", "Route"]
 
 # Initialize Julia modules
-jl.include("src/TspJulia/elements/Elements.jl")
-jl.seval("using .Elements")
+if not jl.seval("isdefined(Main, :TspJulia)"):
+    jl.include("srcjl/TspJulia.jl")
+jl.seval("using .TspJulia")
+jl.seval("using .TspJulia.Elements")
 
 
 @dataclass
