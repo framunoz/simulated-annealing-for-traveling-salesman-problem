@@ -12,8 +12,9 @@ using .SimulatedAnnealing
 
 using Random
 
+
 p = Point(1.0, 2.0)
-c = Cities([
+cities_arr = [
     p,
     Point(2.0, 3.0),
     Point(3.0, 4.0),
@@ -24,7 +25,9 @@ c = Cities([
     Point(8.0, 9.0),
     Point(9.0, 10.0),
     Point(10.0, 11.0),
-])
+]
+rng = Random.Xoshiro(42)
+c = Cities(shuffle(rng, cities_arr))
 
 r = Route(1:10)
 dm = compute_distance_matrix(c)
@@ -55,10 +58,11 @@ r6 = sample(k6, r)
 
 sa = SimulatedAnnealingTSP(c, k6)
 sa_stats = SAStatsProxy(sa)
-println(sa)
 
-last_route = run_sa(sa_stats)
-println(last_route)
-println(total_distance(c, last_route))
+best_route, best_value = run_sa(sa_stats)
+println(c)
+println(best_route)
+println(c[best_route])
+println(total_distance(c, best_route))
 
 println(sa_stats)

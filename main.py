@@ -1,8 +1,8 @@
 from juliacall import Main as jl
 
-jl.include("src/TspJulia/Elements.jl")
+jl.include("src/TspJulia/elements/Elements.jl")
 jl.seval("using .Elements")
-jl.include("src/TspJulia/Kernels.jl")
+jl.include("src/TspJulia/kernels/Kernels.jl")
 jl.seval("using .Kernels")
 
 p = jl.Point(1.0, 2.0)
