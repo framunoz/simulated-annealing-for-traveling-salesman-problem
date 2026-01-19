@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from juliacall import AnyValue  # type: ignore
 from juliacall import Main as jl  # type: ignore
 
-from tsp.jl.common import JuliaWrapper
+from .common import JuliaWrapper
 
 __all__ = ["Point", "Cities", "Route"]
 
@@ -28,11 +28,13 @@ class Point(JuliaWrapper):
     x: float
     y: float
 
+    @t.override
     def _to_jl_impl(self) -> AnyValue:
         """Convert to Julia Point."""
         return jl.Point(self.x, self.y)
 
     @classmethod
+    @t.override
     def from_jl(cls, jl_value: AnyValue) -> t.Self:
         """Create Point from Julia Point."""
         return cls(x=float(jl_value.x), y=float(jl_value.y))
@@ -47,12 +49,14 @@ class Cities(JuliaWrapper):
     """
     cities: list[Point]
 
+    @t.override
     def _to_jl_impl(self) -> AnyValue:
         """Convert to Julia Cities."""
         jl_points = [city.to_jl() for city in self.cities]
         return jl.Cities(jl_points)
 
     @classmethod
+    @t.override
     def from_jl(cls, jl_value: AnyValue) -> t.Self:
         """Create Cities from Julia Cities."""
         cities = [Point.from_jl(jl_value[i]) for i in range(1, len(jl_value) + 1)]
@@ -76,6 +80,7 @@ class Route(JuliaWrapper):
     """
     route: list[int]
 
+    @t.override
     def _to_jl_impl(self) -> AnyValue:
         """Convert to Julia Route (converting to 1-indexed)."""
         # Julia uses 1-indexed arrays
@@ -83,6 +88,7 @@ class Route(JuliaWrapper):
         return jl.Route(jl_route)
 
     @classmethod
+    @t.override
     def from_jl(cls, jl_value: AnyValue) -> t.Self:
         """Create Route from Julia Route (converting to 0-indexed)."""
         # Convert from 1-indexed to 0-indexed

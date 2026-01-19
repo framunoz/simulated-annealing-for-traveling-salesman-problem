@@ -6,9 +6,9 @@ from dataclasses import dataclass
 from juliacall import AnyValue  # type: ignore
 from juliacall import Main as jl  # type: ignore
 
-from tsp.jl.common import JuliaWrapper
-from tsp.jl.elements import Cities, Route
-from tsp.jl.kernels import (
+from .common import JuliaWrapper
+from .elements import Cities, Route
+from .kernels import (
     InsertionKernel,
     MixingKernel,
     RandomWalkKernel,
@@ -50,6 +50,7 @@ class SimulatedAnnealingTSP(JuliaWrapper):
     early_stop: bool = True
     stop_after: int = 10_000
 
+    @t.override
     def _to_jl_impl(self) -> AnyValue:
         """Convert to Julia SimulatedAnnealingTSP."""
         jl_cities = self.cities.to_jl()
@@ -67,6 +68,7 @@ class SimulatedAnnealingTSP(JuliaWrapper):
         return jl.SimulatedAnnealingTSP(jl_cities, jl_kernel, **kwargs)
 
     @classmethod
+    @t.override
     def from_jl(cls, jl_value: AnyValue) -> t.Self:
         """Create SimulatedAnnealingTSP from Julia SimulatedAnnealingTSP."""
         # Kernel conversion is complex, skip for now
@@ -119,12 +121,14 @@ class SAStatsProxy(JuliaWrapper):
         jl_stats = self.to_jl()
         return [float(x) for x in jl_stats.values]
     
+    @t.override
     def _to_jl_impl(self) -> AnyValue:
         """Convert to Julia SAStatsProxy."""
         jl_sa = self.sa.to_jl()
         return jl.SAStatsProxy(jl_sa)
 
     @classmethod
+    @t.override
     def from_jl(cls, jl_value: AnyValue) -> t.Self:
         """Create SAStatsProxy from Julia SAStatsProxy."""
         raise NotImplementedError("from_jl not yet implemented for SAStatsProxy")

@@ -1,13 +1,14 @@
 """Python wrappers for Julia Kernels module."""
 
+import abc
 import typing as t
 from dataclasses import dataclass
 
 from juliacall import AnyValue  # type: ignore
 from juliacall import Main as jl  # type: ignore
 
-from tsp.jl.common import JuliaWrapper
-from tsp.jl.elements import Route
+from .common import JuliaWrapper
+from .elements import Route
 
 __all__ = [
     "SwapKernel",
@@ -26,7 +27,21 @@ jl.seval("using .TspJulia.Kernels")
 
 
 @dataclass
-class SwapKernel(JuliaWrapper):
+class AbstractKernel(JuliaWrapper, abc.ABC):
+    """Abstract base class for Julia Kernels."""
+
+    @abc.abstractmethod
+    def sample(self, route: Route) -> Route:
+        """Sample a new route using the kernel."""
+        ...
+
+    def __call__(self, route: Route) -> Route:
+        """Sample a new route using the kernel."""
+        return self.sample(route)
+
+
+@dataclass
+class SwapKernel(AbstractKernel):
     """Python wrapper for Julia SwapKernel.
     
     Kernel that performs a swap of two cities in the route.
@@ -36,6 +51,7 @@ class SwapKernel(JuliaWrapper):
     """
     seed: int | None = None
 
+    @t.override
     def _to_jl_impl(self) -> AnyValue:
         """Convert to Julia SwapKernel."""
         if self.seed is not None:
@@ -43,11 +59,13 @@ class SwapKernel(JuliaWrapper):
         return jl.SwapKernel()
 
     @classmethod
+    @t.override
     def from_jl(cls, jl_value: AnyValue) -> t.Self:
         """Create SwapKernel from Julia SwapKernel."""
-        seed = jl.get_seed(jl_value)
+        seed = jl.TspJulia.Kernels.get_seed(jl_value)
         return cls(seed=int(seed) if seed is not None else None)
 
+    @t.override
     def sample(self, route: Route) -> Route:
         """Sample a new route by swapping two cities."""
         jl_kernel = self.to_jl()
@@ -57,7 +75,7 @@ class SwapKernel(JuliaWrapper):
 
 
 @dataclass
-class ReversionKernel(JuliaWrapper):
+class ReversionKernel(AbstractKernel):
     """Python wrapper for Julia ReversionKernel.
     
     Kernel that reverses a segment of the route.
@@ -67,6 +85,7 @@ class ReversionKernel(JuliaWrapper):
     """
     seed: int | None = None
 
+    @t.override
     def _to_jl_impl(self) -> AnyValue:
         """Convert to Julia ReversionKernel."""
         if self.seed is not None:
@@ -74,11 +93,13 @@ class ReversionKernel(JuliaWrapper):
         return jl.ReversionKernel()
 
     @classmethod
+    @t.override
     def from_jl(cls, jl_value: AnyValue) -> t.Self:
         """Create ReversionKernel from Julia ReversionKernel."""
-        seed = jl.get_seed(jl_value)
+        seed = jl.TspJulia.Kernels.get_seed(jl_value)
         return cls(seed=int(seed) if seed is not None else None)
 
+    @t.override
     def sample(self, route: Route) -> Route:
         """Sample a new route by reversing a segment."""
         jl_kernel = self.to_jl()
@@ -88,7 +109,7 @@ class ReversionKernel(JuliaWrapper):
 
 
 @dataclass
-class InsertionKernel(JuliaWrapper):
+class InsertionKernel(AbstractKernel):
     """Python wrapper for Julia InsertionKernel.
     
     Kernel that removes a city and inserts it at another position.
@@ -98,6 +119,7 @@ class InsertionKernel(JuliaWrapper):
     """
     seed: int | None = None
 
+    @t.override
     def _to_jl_impl(self) -> AnyValue:
         """Convert to Julia InsertionKernel."""
         if self.seed is not None:
@@ -105,11 +127,13 @@ class InsertionKernel(JuliaWrapper):
         return jl.InsertionKernel()
 
     @classmethod
+    @t.override
     def from_jl(cls, jl_value: AnyValue) -> t.Self:
         """Create InsertionKernel from Julia InsertionKernel."""
-        seed = jl.get_seed(jl_value)
+        seed = jl.TspJulia.Kernels.get_seed(jl_value)
         return cls(seed=int(seed) if seed is not None else None)
 
+    @t.override
     def sample(self, route: Route) -> Route:
         """Sample a new route by inserting a city at a different position."""
         jl_kernel = self.to_jl()
@@ -119,7 +143,7 @@ class InsertionKernel(JuliaWrapper):
 
 
 @dataclass
-class RandomWalkKernel(JuliaWrapper):
+class RandomWalkKernel(AbstractKernel):
     """Python wrapper for Julia RandomWalkKernel.
     
     Kernel that randomly selects from swap, reversion, or insertion.
@@ -129,6 +153,7 @@ class RandomWalkKernel(JuliaWrapper):
     """
     seed: int | None = None
 
+    @t.override
     def _to_jl_impl(self) -> AnyValue:
         """Convert to Julia RandomWalkKernel."""
         if self.seed is not None:
@@ -136,11 +161,13 @@ class RandomWalkKernel(JuliaWrapper):
         return jl.RandomWalkKernel()
 
     @classmethod
+    @t.override
     def from_jl(cls, jl_value: AnyValue) -> t.Self:
         """Create RandomWalkKernel from Julia RandomWalkKernel."""
-        seed = jl.get_seed(jl_value)
+        seed = jl.TspJulia.Kernels.get_seed(jl_value)
         return cls(seed=int(seed) if seed is not None else None)
 
+    @t.override
     def sample(self, route: Route) -> Route:
         """Sample a new route using a random kernel."""
         jl_kernel = self.to_jl()
@@ -150,7 +177,7 @@ class RandomWalkKernel(JuliaWrapper):
 
 
 @dataclass
-class MixingKernel(JuliaWrapper):
+class MixingKernel(AbstractKernel):
     """Python wrapper for Julia MixingKernel.
     
     Kernel that mixes multiple kernels with given probabilities.
@@ -160,24 +187,29 @@ class MixingKernel(JuliaWrapper):
         probs: List of probabilities (must sum to 1)
         seed: Random seed (optional)
     """
-    kernels: list[SwapKernel | ReversionKernel | InsertionKernel | RandomWalkKernel]
+    kernels: t.Sequence[AbstractKernel]
     probs: list[float]
     seed: int | None = None
 
+    @t.override
     def _to_jl_impl(self) -> AnyValue:
         """Convert to Julia MixingKernel."""
         jl_kernels = [k.to_jl() for k in self.kernels]
+        jl_kernels = jl.seval("x -> Vector{AbstractKernel}(x)")(jl_kernels)
+        jl_probs = jl.seval("x -> Vector{Float64}(x)")(self.probs)
         if self.seed is not None:
-            return jl.MixingKernel(jl_kernels, self.probs, self.seed)
-        return jl.MixingKernel(jl_kernels, self.probs)
+            return jl.MixingKernel(jl_kernels, jl_probs, self.seed)
+        return jl.MixingKernel(jl_kernels, jl_probs)
 
     @classmethod
+    @t.override
     def from_jl(cls, jl_value: AnyValue) -> t.Self:
         """Create MixingKernel from Julia MixingKernel."""
         # This is more complex as we need to identify kernel types
         # For now, we'll raise NotImplementedError
         raise NotImplementedError("from_jl not yet implemented for MixingKernel")
 
+    @t.override
     def sample(self, route: Route) -> Route:
         """Sample a new route using one of the mixed kernels."""
         jl_kernel = self.to_jl()

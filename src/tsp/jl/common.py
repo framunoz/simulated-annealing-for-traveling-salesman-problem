@@ -1,14 +1,14 @@
 """Common interfaces for Julia wrappers."""
 
+import abc
 import typing as t
-from abc import ABC, abstractmethod
 
-from juliacall import AnyValue
+from juliacall import AnyValue  # type: ignore
 
 __all__ = ["JuliaWrapper"]
 
 
-class JuliaWrapper(ABC):
+class JuliaWrapper(abc.ABC):
     """Abstract base class for Python wrappers of Julia objects.
     
     This interface defines the contract for converting between Python and Julia objects,
@@ -28,7 +28,7 @@ class JuliaWrapper(ABC):
             object.__setattr__(self, "_jl_obj", self._to_jl_impl())
         return self._jl_obj
 
-    @abstractmethod
+    @abc.abstractmethod
     def _to_jl_impl(self) -> AnyValue:
         """Create the Julia equivalent of this Python object.
         
@@ -41,7 +41,7 @@ class JuliaWrapper(ABC):
         pass
 
     @classmethod
-    @abstractmethod
+    @abc.abstractmethod
     def from_jl(cls, jl_value: AnyValue) -> t.Self:
         """Create a Python object from a Julia object.
         
