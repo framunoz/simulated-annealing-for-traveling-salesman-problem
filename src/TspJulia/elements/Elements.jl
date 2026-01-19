@@ -1,9 +1,8 @@
 module Elements
 
 include("point.jl")
-include("cities.jl")
 include("route.jl")
-include("functions.jl")
+include("cities.jl")
 
 export Point, Cities, Route, distance, compute_distance_matrix, total_distance
 
@@ -23,9 +22,15 @@ function compute_distance_matrix(cities::Cities)
 end
 
 function total_distance(cities::Cities, route::Route)
-    dist_matrix = compute_distance_matrix(cities)
-    return sum(dist_matrix[route[i], route[i + 1]] for i ∈ 1:(length(route) - 1)) +
-           dist_matrix[route[end], route[1]]
+    #! format: off
+    return (
+        sum(
+            distance(cities[route[i]], cities[route[i + 1]])
+            for i ∈ 1:(length(route) - 1)
+        )
+        + distance(cities[route[end]], cities[route[1]])
+    )
+    #! format: on
 end
 
 end  # module Elements
