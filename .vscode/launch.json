@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "julia",
+            "request": "launch",
+            "name": "Julia: Debug Main.jl",
+            "program": "${workspaceFolder}/Main.jl",
+            "stopOnEntry": true,
+            "cwd": "${workspaceFolder}",
+            "juliaEnv": "${workspaceFolder}"
+        }
+    ]
+}
