@@ -15,5 +15,19 @@ Base.getindex(cities::Cities, i)::Point = cities.cities[i]
 Base.setindex!(cities::Cities, v::Point, i) = cities.cities[i] = v
 Base.getindex(cities::Cities, i::UnitRange)::Vector{Point} = cities.cities[i]
 Base.setindex!(cities::Cities, v::Vector{Point}, i::UnitRange) = cities.cities[i] = v
-Base.show(io::IO, cities::Cities) =
-    print(io, "Cities(" * join(cities.cities, ", ") * ")")
+
+function Base.show(io::IO, cities::Cities)
+    if length(cities.cities) == 0
+        return print(io, "Cities()")
+    end
+    cities_repr = ""
+    for (i, city) ∈ enumerate(cities.cities)
+        cities_repr *= "$(i):$(city), "
+    end
+    repr = "Cities($(cities_repr[1:end-2]))"
+    return print(io, repr)
+end
+
+function Base.getindex(cities::Cities, route::Route)::Cities
+    return Cities(cities.cities[route.route])
+end
