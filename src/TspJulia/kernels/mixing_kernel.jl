@@ -1,9 +1,30 @@
 # MARK: Mixing Kernel
 """
+    MixingKernel(kernels, probs, [seed|rng])
+
 Kernel that mixes multiple kernels with given probabilities.
 
 E.g.: For kernels ``K_1``, ``K_2`` and ``K_3`` with probabilities ``p_1``, ``p_2`` and ``p_3``,
 the resulting new kernel would be ``K = p_1 K_1 + p_2 K_2 + p_3 K_3``.
+
+# Example
+
+```jldoctest
+julia> using TspJulia.Elements, TspJulia.Kernels
+
+julia> k1 = SwapKernel(42);
+
+julia> k2 = ReversionKernel(42);
+
+julia> mix = MixingKernel([k1, k2], [0.5, 0.5], 42);
+
+julia> route = Route(collect(1:10));
+
+julia> new_route = sample(mix, route);
+
+julia> new_route == Route([1, 3, 2, 4, 5, 6, 7, 8, 9, 10])
+true
+```
 """
 struct MixingKernel <: AbstractKernel
     kernels::Vector{AbstractKernel}
@@ -13,7 +34,7 @@ struct MixingKernel <: AbstractKernel
 
     function MixingKernel(
         kernels::AbstractVector{<:AbstractKernel},
-        probs::AbstractVector{<:Real},
+        probs::AbstractVector{<:Real};
         seed::Union{Int, Nothing} = nothing,
         rng::Random.AbstractRNG = Random.GLOBAL_RNG,
     )

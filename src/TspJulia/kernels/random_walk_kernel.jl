@@ -1,7 +1,24 @@
 # MARK: Random Walk Kernel
 """
+    RandomWalkKernel([seed|rng])
+
 Kernel that performs a random walk over possible path combinations.
 Returns a different path than the one initially given.
+
+# Example
+
+```jldoctest
+julia> using TspJulia.Elements, TspJulia.Kernels
+
+julia> route = Route(collect(1:5));
+
+julia> kernel = RandomWalkKernel(42);
+
+julia> new_route = sample(kernel, route);
+
+julia> new_route == Route([1, 3, 4, 2, 5])
+true
+```
 """
 struct RandomWalkKernel <: AbstractKernel
     seed::Union{Int, Nothing}
