@@ -21,6 +21,8 @@ end
 sample(kernel::AbstractKernel, route::Elements.Route)::Elements.Route =
     throw(NotImplementedError("sample not implemented for $(typeof(kernel))"))
 
+(kernel::AbstractKernel)(route::Elements.Route)::Elements.Route = sample(kernel, route)
+
 function Base.show(io::IO, kernel::AbstractKernel)
     name = nameof(typeof(kernel))
     if get_seed(kernel) !== nothing
