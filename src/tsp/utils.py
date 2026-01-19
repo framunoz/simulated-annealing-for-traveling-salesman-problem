@@ -1,5 +1,5 @@
 import itertools
-from typing import Iterable, Optional, Literal, Protocol
+from typing import Iterable, Literal, Optional, Protocol
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -65,7 +65,7 @@ class exponential_cooling_schedule:
     """
     def __init__(self, T_0=100, rho=0.99):
         self.T_0 = T_0
-        self.rho = 0.99
+        self.rho = rho
 
     def __call__(self, k: int) -> float:
         return self.rho ** k * self.T_0
