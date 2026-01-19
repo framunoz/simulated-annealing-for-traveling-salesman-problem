@@ -1,6 +1,8 @@
 import functools
 from unittest import TestCase
 
+import numpy as np
+
 from tsp.kernels import *
 
 
