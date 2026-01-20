@@ -1,7 +1,3 @@
-
-import pytest
-from juliacall import AnyValue  # type: ignore
-
 from tsp.jl.elements import Cities, Point, Route
 
 

@@ -1,6 +1,5 @@
 
 import pytest
-from juliacall import AnyValue  # type: ignore
 
 from tsp.jl.elements import Route
 from tsp.jl.kernels import (
