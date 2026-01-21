@@ -76,3 +76,27 @@ def test_mixing_kernel_from_jl_not_implemented():
     
     with pytest.raises(NotImplementedError):
         MixingKernel.from_jl(jl_mixing)
+
+def test_mixing_kernel_tuples():
+    # Test initialization with list of tuples (weight, kernel)
+    kernels_tuples = [
+        (0.4, SwapKernel()), 
+        (0.6, ReversionKernel())
+    ]
+    mixing_kernel = MixingKernel(kernels=kernels_tuples, seed=99)
+    
+    assert len(mixing_kernel.kernels) == 2
+    assert len(mixing_kernel.probs) == 2
+    assert mixing_kernel.probs == [0.4, 0.6]
+    assert isinstance(mixing_kernel.kernels[0], SwapKernel)
+    assert isinstance(mixing_kernel.kernels[1], ReversionKernel)
+    
+    # Check if conversion to Julia works
+    jl_mixing = mixing_kernel.to_jl()
+    assert jl_mixing is not None
+    
+    # Check execution
+    route = Route([0, 1, 2, 3, 4])
+    new_route = mixing_kernel.sample(route)
+    assert isinstance(new_route, Route)
+
