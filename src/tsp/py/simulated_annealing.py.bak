@@ -1,0 +1,177 @@
+
+import typing as t
+from dataclasses import dataclass, field
+
+import numpy as np
+from numpy.random import Generator
+
+from ..plotting import SAStatsProtocol
+from ..utils import _EPS, cooling_schedule_function, exponential_cooling_schedule
+from .elements import Cities, Route
+from .kernels import KernelTSP, SwapKernelTSP
+
+__all__ = ["SimulatedAnnealingTSP", "SAStatsProxy"]
+
+
+@dataclass
+class SimulatedAnnealingTSP:
+    """
+    The Simulated Annealing algorithm for solving the Traveling Salesman Problem.
+    Pure Python implementation.
+    """
+    cities: Cities
+    kernel: KernelTSP
+    n_iter: int = 1_000_000
+    temperature: cooling_schedule_function = field(default_factory=exponential_cooling_schedule)
+    early_stop: bool = True
+    stop_after: int = 10_000
+    seed: t.Optional[int] = None
+
+    def __post_init__(self):
+        # Setup RNG if needed, or rely on kernel's RNG?
+        # Original code used a separate RNG or kernel's RNG.
+        # Here we only need RNG for acceptance probability check if not using kernel's.
+        # But generally kernel has its own RNG.
+        if self.seed is not None:
+             self.rng = np.random.default_rng(self.seed)
+        else:
+             # Try to share kernel's rng if accessible and compatible, or create new default
+             if hasattr(self.kernel, "rng"):
+                 self.rng = self.kernel.rng
+             else:
+                 self.rng = np.random.default_rng()
+
+    def run(
+        self, 
+        after_step: t.Optional[t.Callable[[int, Route, float, float], None]] = None,
+        after_accept: t.Optional[t.Callable[[int, Route, float], None]] = None
+    ) -> tuple[Route, float]:
+        """
+        Execute the algorithm.
+        
+        :param after_step: Callback executed after each iteration. 
+                           Signature: (k, current_route, current_value, log_accept_prob)
+        :param after_accept: Callback executed after a move is accepted.
+                             Signature: (k, new_route, new_value)
+        :return: Best route and its value.
+        """
+        # Initial route
+        route = Route(list(range(len(self.cities))))
+        dist_route = self.cities.total_distance(route)
+        
+        best_route = route
+        best_value = dist_route
+        
+        # Initial stats/callbacks if needed (e.g. record initial state)
+        # We can treat initial state as step -1 or just let the caller handle initialization?
+        # Julia code:
+        # route, route_value = initial_route(sa)
+        # ...
+        # for k in 1:n_iter
+        
+        stop_counter = 0
+        current_route = route
+        current_value = dist_route
+        
+        for k in range(1, self.n_iter + 1):
+            # Sample a new route
+            new_route = self.kernel.sample(current_route)
+            dist_new_route = self.cities.total_distance(new_route)
+
+            # Compute acceptance probability
+            gap = dist_new_route - current_value
+            log_accept_prob = 0.0 if gap <= 0 else -gap / (self.temperature(k) + _EPS)
+
+            accepted = False
+            if log_accept_prob >= 0 or self.rng.uniform() <= np.exp(log_accept_prob):
+                accepted = True
+                stop_counter = 0
+                
+                # Update best
+                if dist_new_route < best_value:
+                    best_route = new_route
+                    best_value = dist_new_route
+                
+                current_route = new_route
+                current_value = dist_new_route
+                
+                if after_accept:
+                    after_accept(k, current_route, current_value)
+            else:
+                stop_counter += 1
+            
+            if after_step:
+                after_step(k, current_route, current_value, log_accept_prob)
+
+            if self.early_stop and stop_counter >= self.stop_after:
+                break
+                
+        return best_route, best_value
+
+
+@dataclass
+class SAStatsProxy:
+    """
+    Proxy wrapper that collects statistics during SA execution.
+    Implements SAStatsProtocol.
+    """
+    sa: SimulatedAnnealingTSP
+    _log_accept_prob: list[float] = field(default_factory=list, init=False)
+    _n_accept: int = field(default=0, init=False)
+    _acceptance_ratio: list[float] = field(default_factory=list, init=False)
+    _values: list[float] = field(default_factory=list, init=False)
+    _best_value: float = field(default=float("inf"), init=False)
+
+    def run(self) -> tuple[Route, float]:
+        self._log_accept_prob.clear()
+        self._n_accept = 0
+        self._acceptance_ratio.clear()
+        self._values.clear()
+        self._best_value = float("inf")
+        
+        # We need to capture the initial value?
+        # The algorithm starts loop at k=1.
+        # Original code recorded initial value.
+        # We'll hook into after_step which runs every iteration.
+        
+        def on_accept(k: int, route: Route, value: float):
+            self._n_accept += 1
+            if value < self._best_value:
+                self._best_value = value
+
+        def on_step(k: int, route: Route, value: float, log_prob: float):
+            self._log_accept_prob.append(log_prob)
+            self._values.append(value)
+            self._acceptance_ratio.append(self._n_accept / k)
+            if value < self._best_value: # Should be redundant if on_accept works, but good for safety
+                 self._best_value = value
+
+        best_route, best_val = self.sa.run(after_step=on_step, after_accept=on_accept)
+        self._best_value = best_val # Ensure it's set to final best
+        
+        return best_route, best_val
+
+    @property
+    def values(self) -> list[float]:
+        return self._values
+
+    @property
+    def accept_prob(self) -> list[float]:
+        return np.exp(np.array(self._log_accept_prob)).tolist()
+    
+    @property
+    def log_acceptance_probs(self) -> list[float]:
+         # For compat if needed
+         return self._log_accept_prob
+
+    @property
+    def acceptance_ratio(self) -> list[float]:
+        return self._acceptance_ratio
+
+    @property
+    def best_value(self) -> float:
+        return self._best_value
+    
+    @property
+    def n_accept(self) -> int:
+        return self._n_accept
