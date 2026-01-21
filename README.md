@@ -2,6 +2,9 @@
 
 # Simulated Annealing for Traveling Salesman Problem
 
+![Optimal Route](imgs/best_route_tuned.png)
+
+
 This project is a **hybrid Python-Julia library** designed to solve the **Traveling Salesman Problem (TSP)** using the **Simulated Annealing** algorithm. It leverages the ease of use of Python for the interface and orchestration, while harnessing the high-performance capabilities of Julia for the core computational kernels.
 
 The kernels implemented in this library are based on the research:
@@ -47,6 +50,32 @@ This project uses [uv](https://docs.astral.sh/uv/) for efficient dependency mana
     uv sync
     ```
 
+## Quick Start
+
+Solve a TSP with 50 random cities in just a few lines of code:
+
+```python
+import numpy as np
+import tsp.py as tsp
+from tsp.utils import sample_coordinates, distance_matrix
+
+# 1. Setup Data
+rng = np.random.default_rng(42)
+coords = sample_coordinates(50, seed=rng)
+city_points = [tsp.Point(x, y) for x, y in coords]
+model = tsp.SimulatedAnnealingTSP(
+    cities=tsp.Cities(city_points),
+    kernel=tsp.SwapKernel(seed=42)
+)
+
+# 2. Run Optimizer
+print("Optimizing...")
+proxy = tsp.SAStatsProxy(model)
+best_route, distance = proxy.run()
+
+print(f"Optimization complete! Final Distance: {distance:.2f}")
+```
+
 ## Usage
 
 ### Running the Solver
@@ -63,6 +92,20 @@ Explore the `notebook_examples` directory for interactive usage and visualizatio
 # Launch Jupyter Lab or Notebook
 uv run jupyter lab notebook_examples/examples.ipynb
 ```
+
+## Visual Results
+
+The algorithm iteratively improves the route to minimize total distance.
+
+| Initial Random Route | Optimized Route |
+|:--------------------:|:---------------:|
+| ![Initial](imgs/route.png) | ![Occupied](imgs/best_route_tuned.png) |
+
+**Convergence Profile**:
+The algorithm accepts worse solutions with decreasing probability (Temperature) to escape local minima.
+
+![Convergence](imgs/summary_tuned.png)
+
 
 ## Project Structure
 

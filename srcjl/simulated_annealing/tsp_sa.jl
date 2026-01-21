@@ -31,7 +31,7 @@ struct SimulatedAnnealingTSP{K <: Kernels.AbstractKernel} <: AbstractSimulatedAn
     cities::Elements.Cities
     kernel::K
     n_iter::Int
-    temperature::Function
+    temperature::Any
     early_stop::Bool
     stop_after::Int
 
@@ -39,7 +39,7 @@ struct SimulatedAnnealingTSP{K <: Kernels.AbstractKernel} <: AbstractSimulatedAn
         cities::Elements.Cities,
         kernel::K;
         n_iter::Int = 1_000_000,
-        temperature::Function = ScheduleFns.exponential_cooling_schedule(
+        temperature::Any = ScheduleFns.exponential_cooling_schedule(
             T₀ = 100,
             ρ = 0.99,
         ),
@@ -53,6 +53,6 @@ end
 get_cities(sa::SimulatedAnnealingTSP)::Elements.Cities = sa.cities
 get_kernel(sa::SimulatedAnnealingTSP)::Kernels.AbstractKernel = sa.kernel
 get_n_iter(sa::SimulatedAnnealingTSP)::Int = sa.n_iter
-get_temperature(sa::SimulatedAnnealingTSP)::Function = sa.temperature
+get_temperature(sa::SimulatedAnnealingTSP)::Any = sa.temperature
 get_early_stop(sa::SimulatedAnnealingTSP)::Bool = sa.early_stop
 get_stop_after(sa::SimulatedAnnealingTSP)::Int = sa.stop_after
