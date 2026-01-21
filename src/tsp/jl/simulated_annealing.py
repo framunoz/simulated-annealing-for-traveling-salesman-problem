@@ -3,10 +3,12 @@
 import typing as t
 from dataclasses import dataclass
 
+import numpy as np
 from juliacall import AnyValue  # type: ignore
 from juliacall import Main as jl  # type: ignore
 
-from .common import JuliaWrapper
+from ..utils import exponential_cooling_schedule, logarithmic_cooling_schedule
+from ._common import JuliaWrapper, project_path
 from .elements import Cities, Route
 from .kernels import (
     InsertionKernel,
@@ -20,7 +22,7 @@ __all__ = ["SimulatedAnnealingTSP", "SAStatsProxy"]
 
 # Initialize Julia modules
 if not jl.seval("isdefined(Main, :TspJulia)"):
-    jl.include("srcjl/TspJulia.jl")
+    jl.include(f"{project_path}/srcjl/TspJulia.jl")
 jl.seval("using .TspJulia")
 jl.seval("using .TspJulia.ScheduleFns")
 jl.seval("using .TspJulia.SimulatedAnnealing")
@@ -63,7 +65,24 @@ class SimulatedAnnealingTSP(JuliaWrapper):
         }
         
         if self.temperature is not None:
-            kwargs["temperature"] = self.temperature
+            if isinstance(self.temperature, exponential_cooling_schedule):
+                # Use native Julia implementation
+                T0 = self.temperature.T_0
+                rho = self.temperature.rho
+                # Use seval to handle unicode kwargs easily
+                jl_temp = jl.seval(f"ScheduleFns.exponential_cooling_schedule(T₀={T0}, ρ={rho})")
+                kwargs["temperature"] = jl_temp
+            elif isinstance(self.temperature, logarithmic_cooling_schedule):
+                # Use native Julia implementation
+                T0 = self.temperature.T_0
+                k0 = self.temperature.k_0
+                jl_temp = jl.seval(f"ScheduleFns.log_cooling_schedule(T₀={T0}, k₀={k0})")
+                kwargs["temperature"] = jl_temp
+            else:
+                # Wrap generic python callable in a Julia function
+                # The Julia function expects 1 argument (k) and ensures Float64 return
+                jl_temp = jl.seval("f -> (k -> Float64(f(k)))")(self.temperature)
+                kwargs["temperature"] = jl_temp
         
         return jl.SimulatedAnnealingTSP(jl_cities, jl_kernel, **kwargs)
 
@@ -100,12 +119,15 @@ class SAStatsProxy(JuliaWrapper):
         values: Objective function values at each step (populated after run)
     """
     sa: SimulatedAnnealingTSP
-
     @property
     def log_acceptance_probs(self) -> list[float]:
         jl_stats = self.to_jl()
         return [float(x) for x in jl_stats.log_acceptance_probs]
     
+    @property
+    def accept_prob(self) -> list[float]:
+        return np.exp(np.array(self.log_acceptance_probs)).tolist()
+
     @property
     def n_accept(self) -> int:
         jl_stats = self.to_jl()
@@ -120,7 +142,7 @@ class SAStatsProxy(JuliaWrapper):
     def values(self) -> list[float]:
         jl_stats = self.to_jl()
         return [float(x) for x in jl_stats.values]
-    
+
     @t.override
     def _to_jl_impl(self) -> AnyValue:
         """Convert to Julia SAStatsProxy."""

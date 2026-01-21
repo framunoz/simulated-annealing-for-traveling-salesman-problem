@@ -6,13 +6,14 @@ from dataclasses import dataclass
 from juliacall import AnyValue  # type: ignore
 from juliacall import Main as jl  # type: ignore
 
-from .common import JuliaWrapper
+from ._common import JuliaWrapper, project_path
 
 __all__ = ["Point", "Cities", "Route"]
 
+
 # Initialize Julia modules
 if not jl.seval("isdefined(Main, :TspJulia)"):
-    jl.include("srcjl/TspJulia.jl")
+    jl.include(f"{project_path}/srcjl/TspJulia.jl")
 jl.seval("using .TspJulia")
 jl.seval("using .TspJulia.Elements")
 

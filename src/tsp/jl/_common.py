@@ -1,11 +1,14 @@
 """Common interfaces for Julia wrappers."""
 
 import abc
+import pathlib
 import typing as t
 
 from juliacall import AnyValue  # type: ignore
 
-__all__ = ["JuliaWrapper"]
+__all__ = ["JuliaWrapper", "project_path"]
+
+project_path = pathlib.Path(__file__).parent.parent.parent.parent.resolve()
 
 
 class JuliaWrapper(abc.ABC):

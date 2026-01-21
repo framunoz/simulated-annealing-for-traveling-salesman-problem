@@ -1,18 +1,16 @@
 """Python wrappers for Julia TSP modules."""
 
-from tsp.jl.common import JuliaWrapper
-from tsp.jl.elements import Cities, Point, Route
-from tsp.jl.kernels import (
+from .elements import Cities, Point, Route
+from .kernels import (
     InsertionKernel,
     MixingKernel,
     RandomWalkKernel,
     ReversionKernel,
     SwapKernel,
 )
-from tsp.jl.simulated_annealing import SAStatsProxy, SimulatedAnnealingTSP
+from .simulated_annealing import SAStatsProxy, SimulatedAnnealingTSP
 
 __all__ = [
-    "JuliaWrapper",
     "Point",
     "Cities",
     "Route",

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from juliacall import AnyValue  # type: ignore
 from juliacall import Main as jl  # type: ignore
 
-from .common import JuliaWrapper
+from ._common import JuliaWrapper, project_path
 from .elements import Route
 
 __all__ = [
@@ -19,9 +19,8 @@ __all__ = [
 ]
 
 # Initialize Julia modules
-# Initialize Julia modules
 if not jl.seval("isdefined(Main, :TspJulia)"):
-    jl.include("srcjl/TspJulia.jl")
+    jl.include(f"{project_path}/srcjl/TspJulia.jl")
 jl.seval("using .TspJulia")
 jl.seval("using .TspJulia.Kernels")
 
@@ -176,7 +175,7 @@ class RandomWalkKernel(AbstractKernel):
         return Route.from_jl(jl_new_route)
 
 
-@dataclass
+@dataclass(init=False)
 class MixingKernel(AbstractKernel):
     """Python wrapper for Julia MixingKernel.
     
@@ -190,6 +189,32 @@ class MixingKernel(AbstractKernel):
     kernels: t.Sequence[AbstractKernel]
     probs: list[float]
     seed: int | None = None
+
+    def __init__(
+        self, 
+        kernels: t.Sequence[AbstractKernel] | t.Sequence[tuple[float, AbstractKernel]],
+        probs: list[float] | None = None,
+        seed: int | None = None
+    ):
+        if probs is None:
+            # Check if kernels are tuples
+            if kernels and isinstance(kernels[0], tuple):
+                 # Assume list of tuples
+                 kp_list = t.cast(list[tuple[float, AbstractKernel]], kernels)
+                 probs = [p for p, k in kp_list]
+                 kernels = [k for p, k in kp_list]
+            else:
+                 # Default to equal probabilities? Or raise error?
+                 # Python impl raised error if probs is None and kernels not tuples.
+                 # Let's assume standard behavior of error or handle gracefully if empty.
+                 if not kernels:
+                     probs = []
+                 else:
+                     raise ValueError("If probs is None, kernels must be tuples of (weight, kernel)")
+        
+        self.kernels = t.cast(t.Sequence[AbstractKernel], kernels)
+        self.probs = probs
+        self.seed = seed
 
     @t.override
     def _to_jl_impl(self) -> AnyValue:
