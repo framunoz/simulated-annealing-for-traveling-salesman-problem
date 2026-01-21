@@ -1,0 +1,66 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run All Julia Tests",
+            "type": "shell",
+            "command": "julia",
+            "args": [
+                "--project=.",
+                "run_tests.jl",
+                "tests/srcjl"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Run Julia Kernel Tests",
+            "type": "shell",
+            "command": "julia",
+            "args": [
+                "--project=.",
+                "run_tests.jl",
+                "tests/srcjl/kernels"
+            ],
+            "group": "test"
+        },
+        {
+            "label": "Run Julia Elements Tests",
+            "type": "shell",
+            "command": "julia",
+            "args": [
+                "--project=.",
+                "run_tests.jl",
+                "tests/srcjl/elements"
+            ],
+            "group": "test"
+        },
+        {
+            "label": "Run Julia Tests (Select Folder)",
+            "type": "shell",
+            "command": "julia",
+            "args": [
+                "--project=.",
+                "run_tests.jl",
+                "${input:testPath}"
+            ],
+            "group": "test",
+            "problemMatcher": [],
+            "detail": "Run tests in a specific folder"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "testPath",
+            "type": "promptString",
+            "description": "Path to test folder (e.g., tests/srcjl/kernels)",
+            "default": "tests/srcjl"
+        }
+    ]
+}
