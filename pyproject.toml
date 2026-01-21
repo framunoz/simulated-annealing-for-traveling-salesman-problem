@@ -18,6 +18,7 @@ dependencies = [
     "matplotlib",
     "seaborn",
     "juliacall>=0.9.31",
+    "jupyter>=1.1.1",
 ]
 
 [project.optional-dependencies]
