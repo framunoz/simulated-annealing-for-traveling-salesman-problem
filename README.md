@@ -1,3 +1,5 @@
+![banner](imgs/banner.jpg)
+
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/framunoz/simulated-annealing-for-traveling-salesman-problem)
 
 # Simulated Annealing for Traveling Salesman Problem
